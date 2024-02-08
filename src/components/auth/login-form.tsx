@@ -22,7 +22,7 @@ import {
 import { CardWrapper } from "@/components/auth/card-wrapper";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
-// import { login } from "@/actions/login";
+import { login } from "@/actions/login";
 
 export const LoginForm = () => {
   const searchParams = useSearchParams();
@@ -44,16 +44,16 @@ export const LoginForm = () => {
   });
 
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
-    // setError("");
-    // setSuccess("");
-    // // why use useTransition?
-    // // for the next.js caching tools such as revalidateTag or revalidatePath
-    // startTransition(() => {
-    //   login(values, callbackUrl).then((data) => {
-    //     setError(data?.error);
-    //     setSuccess(data?.success);
-    //   });
-    // });
+    setError("");
+    setSuccess("");
+    // why use useTransition?
+    // for the next.js caching tools such as revalidateTag or revalidatePath
+    startTransition(() => {
+      login(values, callbackUrl).then((data) => {
+        setError(data?.error);
+        // setSuccess(data?.success);
+      });
+    });
   };
 
   return (

@@ -4,6 +4,8 @@ import "./globals.css";
 
 import { Toaster } from "@/components/ui/sonner";
 import ClientLayout from "@/components/client-layout";
+import { SessionProvider } from "next-auth/react";
+import { auth } from "@/auth";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -12,17 +14,21 @@ export const metadata: Metadata = {
   description: "Panorama the best all in CRM to run your business and grow!",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <ClientLayout>{children}</ClientLayout>
-        <Toaster position="top-center" richColors />
-      </body>
-    </html>
+    <SessionProvider session={session}>
+      <html lang="en">
+        <body className={inter.className}>
+          <ClientLayout>{children}</ClientLayout>
+          <Toaster position="top-center" richColors />
+        </body>
+      </html>
+    </SessionProvider>
   );
 }
