@@ -9,6 +9,8 @@ import { newVerification } from "@/actions/new-verification";
 import { CardWrapper } from "@/components/auth/card-wrapper";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
+import { login } from "@/actions/login";
+import { toast } from "sonner";
 
 export const NewVerificationForm = () => {
   const [error, setError] = useState<string | undefined>("");
@@ -29,13 +31,13 @@ export const NewVerificationForm = () => {
 
     newVerification(token)
       .then((data) => {
-        if (data.success) {
-          setTimeout(() => {
-            router.push("/settings");
-          }, 2000);
-        }
         setSuccess(data.success);
         setError(data.error);
+        if (data.success) {
+          setTimeout(() => {
+            router.push("/agency/auth/login");
+          }, 1000);
+        }
       })
       .catch(() => {
         setError("Something went wrong!");
@@ -52,7 +54,7 @@ export const NewVerificationForm = () => {
   return (
     <CardWrapper
       headerLabel="Confirming your verification"
-      backButtonHref="/auth/login"
+      backButtonHref="/agency/auth/login"
       backButtonLabel="Back to login"
     >
       <div className="flex items-center w-full justify-center">

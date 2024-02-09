@@ -26,6 +26,7 @@ export const {
   },
   callbacks: {
     async jwt({ token }) {
+      console.log("async jwt callback - received");
       // if no token, then we are logged out
       if (!token.sub) return token;
 
@@ -46,6 +47,7 @@ export const {
       return token;
     },
     async session({ token, session }) {
+      console.log("async session callback - received");
       // console.log({ sessionToken: token });
 
       if (token.sub && session.user) {
