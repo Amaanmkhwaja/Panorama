@@ -3,7 +3,7 @@
  * These Routes do not require authentication
  * @type {string[]}
  */
-export const publicRoutes = ["/"];
+export const publicRoutes = ["/", "/agency/auth/new-verification"];
 
 /**
  * An array of routes that are used for authentication
@@ -11,7 +11,13 @@ export const publicRoutes = ["/"];
  * authentication purposes
  * @type {string[]}
  */
-export const authRoutes = ["/agency/auth/register", "/agency/auth/login"];
+export const authRoutes = [
+  "/agency/auth/register",
+  "/agency/auth/login",
+  "/agency/auth/error",
+  "/agency/auth/reset",
+  "/agency/auth/new-password",
+];
 
 /**
  * The prefix for API authentication routes

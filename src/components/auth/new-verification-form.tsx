@@ -29,11 +29,11 @@ export const NewVerificationForm = () => {
 
     newVerification(token)
       .then((data) => {
-        // if (data.success) {
-        //   setTimeout(() => {
-        //     router.push("/settings")
-        //   }, 5000)
-        // }
+        if (data.success) {
+          setTimeout(() => {
+            router.push("/settings");
+          }, 2000);
+        }
         setSuccess(data.success);
         setError(data.error);
       })
