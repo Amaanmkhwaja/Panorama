@@ -20,7 +20,7 @@ export const Social = () => {
   const onClick = (provider: "google" | "github") => {
     setLoading(true);
     signIn(provider, {
-      callbackUrl: "/settings",
+      callbackUrl: "/site",
     })
       .then(() => setLoading(false))
       .catch(() => toast.error("Something went wrong."));
