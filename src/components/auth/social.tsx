@@ -33,6 +33,7 @@ export const Social = () => {
         className="w-full"
         variant={"outline"}
         onClick={() => onClick("google")}
+        disabled={true}
       >
         {loading && <Loader2 className="animate-spin mr-2" />}
         <FcGoogle className="w-5 h-5" />
@@ -42,6 +43,7 @@ export const Social = () => {
         className="w-full"
         variant={"outline"}
         onClick={() => onClick("github")}
+        disabled={loading}
       >
         {loading && <Loader2 className="animate-spin mr-2" />}
         <FaGithub className="w-5 h-5" />
