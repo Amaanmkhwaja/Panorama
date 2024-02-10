@@ -12,7 +12,7 @@ export const Navbar = async () => {
   const user = await currentUser();
 
   return (
-    <div className="fixed top-0 right-0 left-0 p-4 flex items-center justify-between z-10">
+    <div className="bg-secondary fixed top-0 right-0 left-0 p-4 flex items-center justify-between z-10">
       <aside className="flex items-center gap-2">
         <Image
           src={"/assets/logo.svg"}
