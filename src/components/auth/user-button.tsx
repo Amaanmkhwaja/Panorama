@@ -38,7 +38,7 @@ export const UserButton = () => {
                 <div className="relative aspect-square h-full w-full">
                   <Image
                     fill
-                    src={"/assets/default_pfp.png"}
+                    src={"/assets/default_pfp.jpg"}
                     alt="pfp"
                     className="border rounded-full"
                   />
