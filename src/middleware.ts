@@ -44,6 +44,10 @@ export default auth((req) => {
     );
   }
 
+  if (nextUrl.pathname === "/agency/auth/new-verification") {
+    return NextResponse.next();
+  }
+
   // at this point in the middelware, user is logged in and accessing a route that they are allowed to visit/or user is accessing the landing page
   const searchParams = nextUrl.searchParams.toString();
   let hostname = req.headers;
