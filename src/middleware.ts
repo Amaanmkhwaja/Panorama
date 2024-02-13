@@ -16,17 +16,23 @@ export default auth((req) => {
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
 
   // the order of these if statements matter
+
+  // checking if it is API auth route
   if (isApiAuthRoute) {
     return NextResponse.next();
   }
 
+  // checking if it is an Auth route
   if (isAuthRoute) {
+    // if a logged in user is accessing an auth route, redirect them
     if (isLoggedIn) {
       return NextResponse.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
     }
     return NextResponse.next();
   }
 
+  // user is not logged in and is not accessing a public route
+  // basically accessing a route that requires a user to be logged in
   if (!isLoggedIn && !isPublicRoute) {
     let callbackUrl = nextUrl.pathname;
     if (nextUrl.search) {
@@ -36,6 +42,49 @@ export default auth((req) => {
     return NextResponse.redirect(
       new URL(`/agency/auth/login?callbackUrl=${encodedCallbackUrl}`, nextUrl)
     );
+  }
+
+  if (nextUrl.pathname === "/agency/auth/new-verification") {
+    return NextResponse.next();
+  }
+
+  // at this point in the middelware, user is logged in and accessing a route that they are allowed to visit/or user is accessing the landing page
+  const searchParams = nextUrl.searchParams.toString();
+  let hostname = req.headers;
+  const pathWithSearchParams = `${nextUrl.pathname}${
+    searchParams.length > 0 ? `${searchParams}` : ""
+  }`;
+
+  // if subdomain exists
+  const customSubdomain = hostname
+    .get("host")
+    ?.split(`${process.env.NEXT_PUBLIC_DOMAIN}`)
+    .filter(Boolean)[0];
+
+  if (customSubdomain) {
+    return NextResponse.rewrite(
+      new URL(`/${customSubdomain}${pathWithSearchParams}`, req.url)
+    );
+  }
+
+  // if the subdomain doesnt exist then we are going to the next stage
+  if (nextUrl.pathname === "/sign-in" || nextUrl.pathname === "/register") {
+    return NextResponse.redirect(new URL("/agency/sign-in", req.url));
+  }
+
+  if (
+    nextUrl.pathname === "/" ||
+    (nextUrl.pathname === "/site" &&
+      nextUrl.host === process.env.NEXT_PUBLIC_DOMAIN)
+  ) {
+    return NextResponse.rewrite(new URL("/site", nextUrl));
+  }
+
+  if (
+    nextUrl.pathname.startsWith("/agency") ||
+    nextUrl.pathname.startsWith("/subaccount")
+  ) {
+    return NextResponse.rewrite(new URL(`${pathWithSearchParams}`, req.url));
   }
 
   return NextResponse.next();

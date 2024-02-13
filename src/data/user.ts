@@ -1,3 +1,4 @@
+import { currentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 
 export const getUserByEmail = async (email: string) => {
@@ -19,3 +20,35 @@ export const getUserById = async (id: string) => {
     return null;
   }
 };
+
+export const getAuthUserDetails = async () => {
+  try {
+    const user = await currentUser();
+    if (!user) {
+      return null;
+    }
+
+    const userData = await db.userDetails.findUnique({
+      where: { email: user.email! },
+      include: {
+        Agency: {
+          include: {
+            SidebarOption: true,
+            SubAccount: {
+              include: { SidebarOption: true },
+            },
+          },
+        },
+        Permissions: true,
+      },
+    });
+
+    return userData;
+  } catch (error) {
+    return null;
+  }
+};
+
+// export const verifyAndAcceptInvitation = async () => {
+//   const user =
+// }
