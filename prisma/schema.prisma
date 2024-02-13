@@ -27,21 +27,31 @@ enum UserRole {
 }
 
 model User {
-  id            String         @id @default(uuid())
+  id            String    @id @default(uuid())
   name          String?
-  email         String?        @unique
+  email         String?   @unique
   emailVerified DateTime?
   image         String?
   password      String?
-  role          UserRole       @default(SUBACCOUNT_USER)
+  role          UserRole  @default(SUBACCOUNT_USER)
   accounts      Account[]
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  agencyId      String?
-  Agency        Agency?        @relation(fields: [agencyId], references: [id], onDelete: Cascade)
-  Permissions   Permissions[]
-  Ticket        Ticket[]
-  Notification  Notification[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model UserDetails {
+  id           String         @id @default(uuid())
+  name         String?
+  email        String?        @unique
+  image        String?
+  createdAt    DateTime       @default(now())
+  role         UserRole       @default(SUBACCOUNT_USER)
+  updatedAt    DateTime       @updatedAt
+  agencyId     String?
+  Agency       Agency?        @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  Permissions  Permissions[]
+  Ticket       Ticket[]
+  Notification Notification[]
 
   @@index([agencyId])
 }
@@ -85,11 +95,11 @@ model PasswordResetToken {
 }
 
 model Permissions {
-  id           String     @id @default(uuid())
+  id           String      @id @default(uuid())
   email        String
-  User         User       @relation(fields: [email], references: [email], onDelete: Cascade)
+  User         UserDetails @relation(fields: [email], references: [email], onDelete: Cascade)
   subAccountId String
-  SubAccount   SubAccount @relation(fields: [subAccountId], references: [id], onDelete: Cascade)
+  SubAccount   SubAccount  @relation(fields: [subAccountId], references: [id], onDelete: Cascade)
   access       Boolean
 
   @@index([subAccountId])
@@ -111,7 +121,7 @@ model Agency {
   state            String
   country          String
   goal             Int                   @default(5)
-  users            User[]
+  users            UserDetails[]
   createdAt        DateTime              @default(now())
   updatedAt        DateTime              @updatedAt
   SubAccount       SubAccount[]
@@ -208,7 +218,7 @@ model Ticket {
   Customer   Contact? @relation(fields: [customerId], references: [id], onDelete: SetNull)
 
   assignedUserId String?
-  Assigned       User?   @relation(fields: [assignedUserId], references: [id], onDelete: SetNull)
+  Assigned       UserDetails? @relation(fields: [assignedUserId], references: [id], onDelete: SetNull)
 
   @@index([laneId])
   @@index([customerId])
@@ -402,7 +412,7 @@ model Notification {
   subAccountId String?
   userId       String
 
-  User       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  User       UserDetails @relation(fields: [userId], references: [id], onDelete: Cascade)
   Agency     Agency      @relation(fields: [agencyId], references: [id], onDelete: Cascade)
   SubAccount SubAccount? @relation(fields: [subAccountId], references: [id], onDelete: Cascade)
 
