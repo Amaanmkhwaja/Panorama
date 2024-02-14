@@ -6,6 +6,8 @@ import { getNotificationAndUser } from "@/data/notification";
 
 import { Unauthorized } from "@/components/unauthorized";
 import { Sidebar } from "@/components/sidebar/sidebar";
+import { BlurPage } from "@/components/blur-page";
+import { InfoBar } from "@/components/info-bar";
 
 interface MainAgencyLayoutProps {
   children: React.ReactNode;
@@ -29,16 +31,24 @@ export default async function MainAgencyLayout({
     return <Unauthorized />;
   }
 
-  let allNotifications: any[] = [];
+  let allNotifications: any = [];
   const notifications = await getNotificationAndUser(agencyId);
   if (notifications) {
     allNotifications = notifications;
   }
 
   return (
-    <div className="h-screen overflow-hidden">
+    <div className="h-screen max-w-full overflow-hidden">
       <Sidebar id={params.agencyId} type="agency" />
-      <div className="md:pl-[300px]">{children}</div>
+      <div className="md:pl-[300px]">
+        <InfoBar
+          notifications={allNotifications}
+          role={allNotifications.User?.role}
+        />
+        <div className="relative">
+          <BlurPage>{children}</BlurPage>
+        </div>
+      </div>
     </div>
   );
 }
