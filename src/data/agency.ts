@@ -1,11 +1,20 @@
-import { redirect } from "next/navigation";
-
 import { currentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { UserDetails } from "@prisma/client";
 import { saveActivityLogsNotification } from "./notification";
 
 export const getAgencyDetailsById = async (id: string) => {
+  try {
+    const agencyDetails = await db.agency.findUnique({
+      where: { id },
+    });
+    return agencyDetails;
+  } catch (error) {
+    return null;
+  }
+};
+
+export const getAgencyDetailsWithSubaccountById = async (id: string) => {
   try {
     const agencyDetails = await db.agency.findUnique({
       where: { id },

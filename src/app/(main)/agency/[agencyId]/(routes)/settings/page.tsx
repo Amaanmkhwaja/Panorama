@@ -1,4 +1,4 @@
-import { getAgencyDetailsById } from "@/data/agency";
+import { getAgencyDetailsWithSubaccountById } from "@/data/agency";
 import { getUserDetailsById } from "@/data/user";
 import { currentUser } from "@/lib/auth";
 
@@ -20,7 +20,9 @@ const SettingsPage = async ({ params }: SettingsPageProps) => {
   const userDetails = await getUserDetailsById(user.id);
   if (!userDetails) return null;
 
-  const agencyDetails = await getAgencyDetailsById(params.agencyId);
+  const agencyDetails = await getAgencyDetailsWithSubaccountById(
+    params.agencyId
+  );
   if (!agencyDetails) return null;
 
   const subAccounts = agencyDetails.SubAccount;
