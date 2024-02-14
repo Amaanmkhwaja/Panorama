@@ -1,6 +1,20 @@
 import { currentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 
+export const getNotificationAndUser = async (agencyId: string) => {
+  try {
+    const data = await db.notification.findMany({
+      where: { agencyId },
+      include: { User: true },
+      orderBy: { createdAt: "desc" },
+    });
+    return data;
+  } catch (error) {
+    console.error("getNotificationAndUser error: ", error);
+    return null;
+  }
+};
+
 export const saveActivityLogsNotification = async ({
   agencyId,
   description,

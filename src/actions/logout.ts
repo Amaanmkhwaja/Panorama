@@ -6,6 +6,6 @@ import { signOut } from "@/auth";
 // If you want to do some server stuff before you log out the user.
 export const logout = async () => {
   await signOut({
-    redirectTo: "/site",
+    redirectTo: "/",
   });
 };

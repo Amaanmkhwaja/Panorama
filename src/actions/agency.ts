@@ -2,7 +2,7 @@
 
 import { currentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { Agency, UserDetails } from "@prisma/client";
+import { Agency, Plan, UserDetails } from "@prisma/client";
 
 export const updateAgencyDetails = async (
   agencyId: string,
@@ -61,4 +61,62 @@ export const initUser = async (newUser: Partial<UserDetails>) => {
   });
 
   return { success: "ok", userData };
+};
+
+export const upsertAgency = async (agency: Agency, price?: Plan) => {
+  if (!agency.companyEmail) return null;
+
+  try {
+    const agencyDetails = await db.agency.upsert({
+      where: {
+        id: agency.id,
+      },
+      update: agency,
+      create: {
+        users: {
+          connect: { email: agency.companyEmail },
+        },
+        ...agency,
+        SidebarOption: {
+          create: [
+            {
+              name: "Dashboard",
+              icon: "category",
+              link: `/agency/${agency.id}`,
+            },
+            {
+              name: "Launchpad",
+              icon: "clipboardIcon",
+              link: `/agency/${agency.id}/launchpad`,
+            },
+            {
+              name: "Billing",
+              icon: "payment",
+              link: `/agency/${agency.id}/billing`,
+            },
+            {
+              name: "Settings",
+              icon: "settings",
+              link: `/agency/${agency.id}/settings`,
+            },
+            {
+              name: "Sub Accounts",
+              icon: "person",
+              link: `/agency/${agency.id}/all-subaccounts`,
+            },
+            {
+              name: "Team",
+              icon: "shield",
+              link: `/agency/${agency.id}/team`,
+            },
+          ],
+        },
+      },
+    });
+
+    return { success: "Created agency!" };
+  } catch (error) {
+    console.error("upsertAgency server action error: ", error);
+    return { error: "Something went wrong." };
+  }
 };

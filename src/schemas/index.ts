@@ -1,5 +1,29 @@
 import * as z from "zod";
 
+export const UserDetailsSchema = z.object({
+  name: z.string().min(1),
+  email: z.string().email(),
+  avatarUrl: z.string(),
+  role: z.enum([
+    "AGENCY_OWNER",
+    "AGENCY_ADMIN",
+    "SUBACCOUNT_USER",
+    "SUBACCOUNT_GUEST",
+  ]),
+});
+
+export const SubaccountDetailsSchema = z.object({
+  name: z.string(),
+  companyEmail: z.string(),
+  companyPhone: z.string().min(1),
+  address: z.string(),
+  city: z.string(),
+  subAccountLogo: z.string(),
+  zipCode: z.string(),
+  state: z.string(),
+  country: z.string(),
+});
+
 export const AgencyDetailsSchema = z.object({
   name: z
     .string()

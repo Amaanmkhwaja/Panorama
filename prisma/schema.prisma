@@ -43,8 +43,8 @@ model User {
 model UserDetails {
   id           String         @id @default(uuid())
   userId       String         @unique
-  name         String?
-  email        String?        @unique
+  name         String
+  email        String         @unique
   image        String?
   createdAt    DateTime       @default(now())
   role         UserRole       @default(SUBACCOUNT_USER)
