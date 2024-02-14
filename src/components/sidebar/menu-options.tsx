@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { useModal } from "@/providers/modal-provider";
 import { ChevronsUpDown, Compass, Menu, PlusCircleIcon } from "lucide-react";
 import {
+  Agency,
   AgencySidebarOption,
   SubAccount,
   SubAccountSidebarOption,
@@ -17,6 +18,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { CustomModal } from "@/components/global/custom-modal";
+import { SubAccountDetails } from "@/components/forms/subbaccount-details";
 import {
   Popover,
   PopoverContent,
@@ -74,12 +77,13 @@ export const MenuOptions = ({
 
   if (!isMounted) return null;
 
+  // NOTE: If we give the user the possibility to create sidebar options for their subaccounts,
+  // like show some custom pages, this can show in the menu link sidebar
+  // NOTE: can it make it powerful by: Let's say if we created a funnel, you can take the hosted page and you can host that page inside an iframe.
+  // Now the user can create whatever they want for their sidebar items
+
   return (
-    <Sheet
-      modal={false}
-      // {...openState}
-      open={true}
-    >
+    <Sheet modal={false} {...openState}>
       <SheetTrigger
         asChild
         className="absolute left-4 top-4 z-[100] md:!hidden felx"
@@ -242,20 +246,20 @@ export const MenuOptions = ({
                   <SheetClose>
                     <Button
                       className="w-full flex gap-2"
-                      // onClick={() => {
-                      //   setOpen(
-                      //     <CustomModal
-                      //       title="Create A Subaccount"
-                      //       subheading="You can switch between your agency account and the subaccount from the sidebar"
-                      //     >
-                      //       <SubAccountDetails
-                      //         agencyDetails={user?.Agency as Agency}
-                      //         userId={user?.id as string}
-                      //         userName={user?.name}
-                      //       />
-                      //     </CustomModal>
-                      //   )
-                      // }}
+                      onClick={() => {
+                        setOpen(
+                          <CustomModal
+                            title="Create A Subaccount"
+                            subheading="You can switch between your agency account and the subaccount from the sidebar"
+                          >
+                            <SubAccountDetails
+                              agencyDetails={user?.Agency as Agency}
+                              userId={user?.id as string}
+                              userName={user?.name}
+                            />
+                          </CustomModal>
+                        );
+                      }}
                     >
                       <PlusCircleIcon size={15} />
                       Create Sub Account

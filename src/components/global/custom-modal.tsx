@@ -17,7 +17,7 @@ interface CustomModalProps {
   title: string;
   subheading: string;
   children: React.ReactNode;
-  defaultOpen: boolean;
+  defaultOpen?: boolean;
 }
 
 export const CustomModal = ({
