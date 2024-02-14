@@ -6,12 +6,19 @@ import { useRouter } from "next/navigation";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { NumberInput } from "@tremor/react";
+import { toast } from "sonner";
+import { v4 } from "uuid";
+
 import { Agency } from "@prisma/client";
 import { AgencyDetailsSchema } from "@/schemas";
 import { saveActivityLogsNotification } from "@/actions/notification";
-import { deleteAgency, initUser, updateAgencyDetails } from "@/actions/agency";
-import { NumberInput } from "@tremor/react";
-import { toast } from "sonner";
+import {
+  deleteAgency,
+  initUser,
+  updateAgencyDetails,
+  upsertAgency,
+} from "@/actions/agency";
 
 import FileUpload from "@/components/global/file-upload";
 import { Button } from "@/components/ui/button";
@@ -107,7 +114,38 @@ export const AgencyDetails = ({ data }: AgencyDetailsProps) => {
           },
         };
       }
+
+      // WIP: custId
       newUserData = await initUser({ role: "AGENCY_OWNER" });
+      if (!data?.customerId) {
+        const response = await upsertAgency({
+          id: data?.id ? data.id : v4(),
+          customerId: data?.customerId || custId || "",
+          address: values.address,
+          agencyLogo: values.agencyLogo,
+          city: values.city,
+          companyPhone: values.companyPhone,
+          country: values.country,
+          name: values.name,
+          state: values.state,
+          whiteLabel: values.whiteLabel,
+          zipCode: values.zipCode,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          companyEmail: values.companyEmail,
+          connectAccountId: "",
+          goal: 5,
+        });
+        if (response?.error) {
+          return toast.error(response.error);
+        }
+
+        toast.success(response?.success);
+        if (data?.id) return router.refresh();
+        if (response?.success) {
+          return router.refresh();
+        }
+      }
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong.");
