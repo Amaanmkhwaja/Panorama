@@ -1,5 +1,19 @@
-import { UserRole } from "@prisma/client";
 import * as z from "zod";
+
+export const AgencyDetailsSchema = z.object({
+  name: z
+    .string()
+    .min(2, { message: "Name must be at least 2 characters long" }),
+  companyEmail: z.string().min(1),
+  companyPhone: z.string().min(1),
+  whiteLabel: z.boolean(),
+  address: z.string().min(1),
+  city: z.string().min(1),
+  zipCode: z.string().min(1),
+  state: z.string().min(1),
+  country: z.string().min(1),
+  agencyLogo: z.string().min(1),
+});
 
 export const NewPasswordSchema = z.object({
   password: z.string().min(6, {

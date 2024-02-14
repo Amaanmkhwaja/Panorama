@@ -23,24 +23,26 @@ enum UserRole {
   AGENCY_OWNER
   AGENCY_ADMIN
   SUBACCOUNT_USER
-  SUBACCOUNT_GUEST
+  SUBACCOUNT_GUEST // not being used, need to implement later
 }
 
 model User {
-  id            String    @id @default(uuid())
+  id            String       @id @default(uuid())
   name          String?
-  email         String?   @unique
+  email         String?      @unique
   emailVerified DateTime?
   image         String?
   password      String?
-  role          UserRole  @default(SUBACCOUNT_USER)
+  role          UserRole     @default(SUBACCOUNT_USER)
   accounts      Account[]
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  userDetails   UserDetails?
 }
 
 model UserDetails {
   id           String         @id @default(uuid())
+  userId       String         @unique
   name         String?
   email        String?        @unique
   image        String?
@@ -49,6 +51,7 @@ model UserDetails {
   updatedAt    DateTime       @updatedAt
   agencyId     String?
   Agency       Agency?        @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  User         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   Permissions  Permissions[]
   Ticket       Ticket[]
   Notification Notification[]
