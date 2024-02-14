@@ -35,8 +35,6 @@ export default async function MainAgencyLayout({
     allNotifications = notifications;
   }
 
-  console.log(notifications);
-
   return (
     <div className="h-screen overflow-hidden">
       <Sidebar id={params.agencyId} type="agency" />

@@ -1,5 +1,6 @@
 "use client";
 
+import ModalProvider from "@/providers/modal-provider";
 import { NextUIProvider } from "@nextui-org/react";
 
 interface ClientLayoutProps {
@@ -9,7 +10,9 @@ interface ClientLayoutProps {
 const ClientLayout = ({ children }: ClientLayoutProps) => {
   return (
     <>
-      <NextUIProvider>{children}</NextUIProvider>
+      <NextUIProvider>
+        <ModalProvider>{children}</ModalProvider>
+      </NextUIProvider>
     </>
   );
 };

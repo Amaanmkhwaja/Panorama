@@ -4,14 +4,15 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
+import { icons } from "@/lib/constants";
+import { cn } from "@/lib/utils";
+import { useModal } from "@/providers/modal-provider";
+import { ChevronsUpDown, Compass, Menu, PlusCircleIcon } from "lucide-react";
 import {
   AgencySidebarOption,
   SubAccount,
   SubAccountSidebarOption,
 } from "@prisma/client";
-import { icons } from "@/lib/constants";
-import { cn } from "@/lib/utils";
-import { ChevronsUpDown, Compass, Menu, PlusCircleIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -59,7 +60,8 @@ export const MenuOptions = ({
   user,
   id,
 }: MenuOptionsProps) => {
-  const [isMounted, setIsMounted] = useState<boolean>(false);
+  const { setOpen } = useModal();
+  const [isMounted, setIsMounted] = useState(false);
 
   const openState = useMemo(
     () => (defaultOpen ? { open: true } : {}),
@@ -70,9 +72,7 @@ export const MenuOptions = ({
     setIsMounted(true);
   }, []);
 
-  if (!isMounted) {
-    return null;
-  }
+  if (!isMounted) return null;
 
   return (
     <Sheet
@@ -82,17 +82,18 @@ export const MenuOptions = ({
     >
       <SheetTrigger
         asChild
-        className="absolute left-4 top-4 z-[100] md:!hidden flex"
+        className="absolute left-4 top-4 z-[100] md:!hidden felx"
       >
-        <Button variant="outline" size="icon">
+        <Button variant="outline" size={"icon"}>
           <Menu />
         </Button>
       </SheetTrigger>
+
       <SheetContent
         showX={!defaultOpen}
-        side="left"
+        side={"left"}
         className={cn(
-          "bg-background/80 backdrop-blur-xl fixed top-0 border-r-1 p-6",
+          "bg-background/80 backdrop-blur-xl fixed top-0 border-r-[1px] p-6",
           {
             "hidden md:inline-block z-0 w-[300px]": defaultOpen,
             "inline-block md:hidden z-[100] w-full": !defaultOpen,
@@ -103,7 +104,7 @@ export const MenuOptions = ({
           <AspectRatio ratio={16 / 5}>
             <Image
               src={sidebarLogo}
-              alt="Sidebar logo"
+              alt="Sidebar Logo"
               fill
               className="rounded-md object-contain"
             />
@@ -130,14 +131,14 @@ export const MenuOptions = ({
             </PopoverTrigger>
             <PopoverContent className="w-80 h-80 mt-4 z-[200]">
               <Command className="rounded-lg">
-                <CommandInput placeholder="Search accounts..." />
+                <CommandInput placeholder="Search Accounts..." />
                 <CommandList className="pb-16">
-                  <CommandEmpty>No results found</CommandEmpty>
+                  <CommandEmpty> No results found</CommandEmpty>
                   {(user?.role === "AGENCY_OWNER" ||
                     user?.role === "AGENCY_ADMIN") &&
                     user?.Agency && (
                       <CommandGroup heading="Agency">
-                        <CommandItem className="!bg-transparent my-2 text-primary border-1 border-border p-2 rounded-md hover:!bg-muted cursor-pointer transition-all">
+                        <CommandItem className="!bg-transparent my-2 text-primary broder-[1px] border-border p-2 rounded-md hover:!bg-muted cursor-pointer transition-all">
                           {defaultOpen ? (
                             <Link
                               href={`/agency/${user?.Agency?.id}`}
@@ -146,7 +147,7 @@ export const MenuOptions = ({
                               <div className="relative w-16">
                                 <Image
                                   src={user?.Agency?.agencyLogo}
-                                  alt="Agency logo"
+                                  alt="Agency Logo"
                                   fill
                                   className="rounded-md object-contain"
                                 />
@@ -167,7 +168,7 @@ export const MenuOptions = ({
                                 <div className="relative w-16">
                                   <Image
                                     src={user?.Agency?.agencyLogo}
-                                    alt="Agency logo"
+                                    alt="Agency Logo"
                                     fill
                                     className="rounded-md object-contain"
                                   />
@@ -238,28 +239,28 @@ export const MenuOptions = ({
                 </CommandList>
                 {(user?.role === "AGENCY_OWNER" ||
                   user?.role === "AGENCY_ADMIN") && (
-                  // <SheetClose>
-                  <Button
-                    className="w-full flex gap-2"
-                    // onClick={() => {
-                    //   setOpen(
-                    //     <CustomModal
-                    //       title="Create A Subaccount"
-                    //       subheading="You can switch between your agency account and the subaccount from the sidebar"
-                    //     >
-                    //       <SubAccountDetails
-                    //         agencyDetails={user?.Agency as Agency}
-                    //         userId={user?.id as string}
-                    //         userName={user?.name}
-                    //       />
-                    //     </CustomModal>
-                    //   )
-                    // }}
-                  >
-                    <PlusCircleIcon size={15} />
-                    Create Sub Account
-                  </Button>
-                  // </SheetClose>
+                  <SheetClose>
+                    <Button
+                      className="w-full flex gap-2"
+                      // onClick={() => {
+                      //   setOpen(
+                      //     <CustomModal
+                      //       title="Create A Subaccount"
+                      //       subheading="You can switch between your agency account and the subaccount from the sidebar"
+                      //     >
+                      //       <SubAccountDetails
+                      //         agencyDetails={user?.Agency as Agency}
+                      //         userId={user?.id as string}
+                      //         userName={user?.name}
+                      //       />
+                      //     </CustomModal>
+                      //   )
+                      // }}
+                    >
+                      <PlusCircleIcon size={15} />
+                      Create Sub Account
+                    </Button>
+                  </SheetClose>
                 )}
               </Command>
             </PopoverContent>
@@ -281,10 +282,7 @@ export const MenuOptions = ({
                       val = <result.path />;
                     }
                     return (
-                      <CommandItem
-                        key={sidebarOptions.id}
-                        // className="md:w-[320px] w-full"
-                      >
+                      <CommandItem key={sidebarOptions.id}>
                         <Link
                           href={sidebarOptions.link}
                           className="flex items-center gap-2 hover:bg-transparent rounded-md transition-all"
