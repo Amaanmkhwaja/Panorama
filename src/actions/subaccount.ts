@@ -98,3 +98,33 @@ export const upsertSubAccount = async (subAccount: SubAccount) => {
     return { error: "Something went wrong." };
   }
 };
+
+export const getSubaccountDetailsById = async (id: string) => {
+  if (!id) {
+    return { error: "Subaccount ID is required." };
+  }
+
+  const subAccountDetails = await db.subAccount.findUnique({
+    where: {
+      id,
+    },
+  });
+  if (!subAccountDetails) {
+    return { error: "Couldn't fetch subaccount details" };
+  }
+
+  return { success: "OK", subAccountDetails };
+};
+
+export const deleteSubAccountById = async (id: string) => {
+  if (!id) {
+    return { error: "Subaccount ID is required." };
+  }
+
+  const deletedAccount = await db.subAccount.delete({
+    where: {
+      id,
+    },
+  });
+  return { success: "Deleted Sub Account" };
+};

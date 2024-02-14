@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { CustomModal } from "@/components/global/custom-modal";
-import { SubAccountDetails } from "@/components/forms/subbaccount-details";
+import { SubAccountDetails } from "@/components/forms/subaccount-details";
 import {
   Popover,
   PopoverContent,
