@@ -1,16 +1,18 @@
-import { FileIcon, X } from "lucide-react";
-import Image from "next/image";
 import React from "react";
-import { Button } from "../ui/button";
+import Image from "next/image";
+
+import { FileIcon, X } from "lucide-react";
 import { UploadDropzone } from "@/lib/uploadthing";
 
-type Props = {
+import { Button } from "@/components/ui/button";
+
+interface UploadThingProps {
   apiEndpoint: "agencyLogo" | "avatar" | "subaccountLogo";
   onChange: (url?: string) => void;
   value?: string;
-};
+}
 
-const FileUpload = ({ apiEndpoint, onChange, value }: Props) => {
+const FileUpload = ({ apiEndpoint, onChange, value }: UploadThingProps) => {
   const type = value?.split(".").pop();
 
   if (value) {

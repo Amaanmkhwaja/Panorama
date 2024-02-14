@@ -48,7 +48,3 @@ export const getAuthUserDetails = async () => {
     return null;
   }
 };
-
-// export const verifyAndAcceptInvitation = async () => {
-//   const user =
-// }
