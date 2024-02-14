@@ -5,6 +5,20 @@ import { db } from "@/lib/db";
 import { UserDetails } from "@prisma/client";
 import { saveActivityLogsNotification } from "./notification";
 
+export const getAgencyDetailsById = async (id: string) => {
+  try {
+    const agencyDetails = await db.agency.findUnique({
+      where: { id },
+      include: {
+        SubAccount: true,
+      },
+    });
+    return agencyDetails;
+  } catch (error) {
+    return null;
+  }
+};
+
 export const createTeamUser = async (agencyId: string, user: UserDetails) => {
   try {
     if (user.role === "AGENCY_OWNER") return null; // already has access

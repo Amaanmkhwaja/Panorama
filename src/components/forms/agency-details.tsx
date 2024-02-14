@@ -24,6 +24,7 @@ import FileUpload from "@/components/global/file-upload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { Loading } from "@/components/global/loading";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -51,7 +52,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Loading } from "@/components/global/loading";
 
 interface AgencyDetailsProps {
   data?: Partial<Agency>;

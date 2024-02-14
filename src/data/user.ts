@@ -48,3 +48,14 @@ export const getAuthUserDetails = async () => {
     return null;
   }
 };
+
+export const getUserDetailsById = async (userId: string) => {
+  try {
+    const userDetails = await db.userDetails.findUnique({
+      where: { userId },
+    });
+    return userDetails;
+  } catch (error) {
+    return null;
+  }
+};

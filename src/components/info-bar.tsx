@@ -10,6 +10,7 @@ import { Bell } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { UserButton } from "@/components/auth/user-button";
+import { ModeToggle } from "@/components/global/mode-toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Sheet,
@@ -122,6 +123,7 @@ export const InfoBar = ({
               )}
             </SheetContent>
           </Sheet>
+          <ModeToggle />
         </div>
       </div>
     </>
