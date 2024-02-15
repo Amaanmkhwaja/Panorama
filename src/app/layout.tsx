@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
 import "./globals.css";
-
-import { Toaster } from "@/components/ui/sonner";
 import ClientLayout from "@/components/client-layout";
 import { ThemeProvider } from "@/providers/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as SonnarToaster } from "@/components/ui/sonner";
 
 const font = DM_Sans({ subsets: ["latin"] });
 
@@ -29,7 +29,8 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <ClientLayout>{children}</ClientLayout>
-          <Toaster position="top-center" richColors />
+          <Toaster />
+          <SonnarToaster position="top-center" richColors />
         </ThemeProvider>
       </body>
     </html>
