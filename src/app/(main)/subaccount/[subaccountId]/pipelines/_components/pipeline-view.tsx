@@ -15,10 +15,10 @@ import {
 } from "@/lib/types";
 
 import { Button } from "@/components/ui/button";
-import LaneForm from "@/components/forms/lane-form";
+import { LaneForm } from "@/components/forms/lane-form";
 import { CustomModal } from "@/components/global/custom-modal";
 
-import PipelineLane from "./pipeline-lane";
+// import PipelineLane from "./pipeline-lane";
 
 interface PipelineViewProps {
   lanes: LaneDetail[];
@@ -161,7 +161,7 @@ export const PipelineView = ({
               ref={provided.innerRef}
             >
               <div className="flex mt-4">
-                {allLanes.map((lane, index) => (
+                {/* {allLanes.map((lane, index) => (
                   <PipelineLane
                     allTickets={allTickets}
                     setAllTickets={setAllTickets}
@@ -172,7 +172,7 @@ export const PipelineView = ({
                     index={index}
                     key={lane.id}
                   />
-                ))}
+                ))} */}
                 {provided.placeholder}
               </div>
             </div>

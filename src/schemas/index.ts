@@ -1,5 +1,9 @@
 import * as z from "zod";
 
+export const LaneFormSchema = z.object({
+  name: z.string().min(1),
+});
+
 export const CreateFunnelSchema = z.object({
   name: z.string().min(1),
   description: z.string(),
