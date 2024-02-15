@@ -1,7 +1,8 @@
 import { currentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { UserDetails } from "@prisma/client";
+import { UserDetails, UserRole } from "@prisma/client";
 import { saveActivityLogsNotification } from "./notification";
+import { redirect } from "next/navigation";
 
 export const getAgencyDetailsById = async (id: string) => {
   try {
@@ -99,7 +100,7 @@ export const verifyAndAcceptInvitation = async () => {
       return agency ? agency.agencyId : null;
     }
   } catch (error) {
-    console.log("veriffyAndAcceptInvitation error: ", error);
+    console.log("verifyAndAcceptInvitation error: ", error);
     return null;
   }
 };
