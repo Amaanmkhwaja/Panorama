@@ -7,6 +7,7 @@ import { LaneDetail } from "@/lib/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { PipelineInfoBar } from "../_components/pipeline-infobar";
+import { PipelineSettings } from "../_components/pipeline-settings";
 
 interface PipelineIdPageProps {
   params: { subaccountId: string; pipelineId: string };
@@ -40,7 +41,13 @@ const PipelineIdPage = async ({ params }: PipelineIdPageProps) => {
         </div>
       </TabsList>
       <TabsContent value="view"></TabsContent>
-      <TabsContent value="settings"></TabsContent>
+      <TabsContent value="settings">
+        <PipelineSettings
+          pipelineId={params.pipelineId}
+          pipelines={pipelines}
+          subaccountId={params.subaccountId}
+        />
+      </TabsContent>
     </Tabs>
   );
 };

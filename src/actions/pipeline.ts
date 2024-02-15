@@ -23,3 +23,18 @@ export const upsertPipeline = async (
     return { error: "Something went wrong." };
   }
 };
+
+export const deletePipeline = async (pipelineId: string) => {
+  if (!pipelineId) {
+    return { error: "Missing Pipeline ID" };
+  }
+
+  try {
+    const deletedPipeline = await db.pipeline.delete({
+      where: { id: pipelineId },
+    });
+    return { success: "Deleted pipeline!", deletedPipeline };
+  } catch (error) {
+    return { error: "Something went wrong." };
+  }
+};
