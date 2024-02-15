@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { Flag, Plus } from "lucide-react";
@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { LaneForm } from "@/components/forms/lane-form";
 import { CustomModal } from "@/components/global/custom-modal";
 
-// import PipelineLane from "./pipeline-lane";
+import PipelineLane from "./pipeline-lane";
 
 interface PipelineViewProps {
   lanes: LaneDetail[];
@@ -156,12 +156,12 @@ export const PipelineView = ({
         >
           {(provided) => (
             <div
-              className="flex item-center gap-x-2 overflow-scroll"
+              className="flex item-center gap-x-2 overflow-auto"
               {...provided.droppableProps}
               ref={provided.innerRef}
             >
               <div className="flex mt-4">
-                {/* {allLanes.map((lane, index) => (
+                {allLanes.map((lane, index) => (
                   <PipelineLane
                     allTickets={allTickets}
                     setAllTickets={setAllTickets}
@@ -172,7 +172,7 @@ export const PipelineView = ({
                     index={index}
                     key={lane.id}
                   />
-                ))} */}
+                ))}
                 {provided.placeholder}
               </div>
             </div>

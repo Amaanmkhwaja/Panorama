@@ -138,3 +138,8 @@ export const updateTicketsOrder = async (tickets: Ticket[]) => {
     toast.error("🔴 ERROR UPDATE TICKET ORDER");
   }
 };
+
+export const deleteLane = async (laneId: string) => {
+  const resposne = await db.lane.delete({ where: { id: laneId } });
+  return resposne;
+};

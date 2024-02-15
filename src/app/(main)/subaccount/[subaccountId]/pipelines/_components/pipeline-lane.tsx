@@ -1,7 +1,22 @@
 "use client";
 
-import CreateLaneForm from "@/components/forms/lane-form";
+import React, { Dispatch, SetStateAction, useMemo } from "react";
+import { useRouter } from "next/navigation";
 
+import { Draggable, Droppable } from "react-beautiful-dnd";
+import { Edit, MoreVertical, PlusCircleIcon, Trash } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+import { LaneDetail, TicketWithTags } from "@/lib/types";
+import { useModal } from "@/providers/modal-provider";
+
+import { deleteLane } from "@/actions/pipeline";
+import { saveActivityLogsNotification } from "@/actions/notification";
+
+import { Badge } from "@/components/ui/badge";
+import { LaneForm } from "@/components/forms/lane-form";
+import { TicketForm } from "@/components/forms/ticket-form";
+import { CustomModal } from "@/components/global/custom-modal";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,7 +28,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,20 +36,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { deleteLane } from "@/lib/queries";
-import { saveActivityLogsNotification } from "@/actions/notification";
 
-import { LaneDetail, TicketWithTags } from "@/lib/types";
-import { cn } from "@/lib/utils";
-import { useModal } from "@/providers/modal-provider";
-import { Draggable, Droppable } from "react-beautiful-dnd";
-import { Edit, MoreVertical, PlusCircleIcon, Trash } from "lucide-react";
-import { useRouter } from "next/navigation";
-import React, { Dispatch, SetStateAction, useMemo } from "react";
-// import PipelineTicket from './pipeline-ticket'
-import { CustomModal } from "@/components/global/custom-modal";
-import TicketForm from "@/components/forms/ticket-form";
-import PipelineTicket from "./pipeline-ticket";
+import { PipelineTicket } from "./pipeline-ticket";
 
 interface PipelaneLaneProps {
   setAllTickets: Dispatch<SetStateAction<TicketWithTags>>;
@@ -96,7 +98,7 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
   const handleEditLane = () => {
     setOpen(
       <CustomModal title="Edit Lane Details" subheading="">
-        <CreateLaneForm pipelineId={pipelineId} defaultData={laneDetails} />
+        <LaneForm pipelineId={pipelineId} defaultData={laneDetails} />
       </CustomModal>
     );
   };
@@ -177,7 +179,7 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
                     type="ticket"
                   >
                     {(provided) => (
-                      <div className=" max-h-[700px] overflow-scroll pt-12 ">
+                      <div className=" max-h-[700px] overflow-auto pt-12">
                         <div
                           {...provided.droppableProps}
                           ref={provided.innerRef}
@@ -202,12 +204,12 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
                   <DropdownMenuContent>
                     <DropdownMenuLabel>Options</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <AlertDialogTrigger>
-                      <DropdownMenuItem className="flex items-center gap-2">
-                        <Trash size={15} />
-                        Delete
-                      </DropdownMenuItem>
-                    </AlertDialogTrigger>
+                    {/* <AlertDialogTrigger> */}
+                    <DropdownMenuItem className="flex items-center gap-2">
+                      <Trash size={15} />
+                      Delete
+                    </DropdownMenuItem>
+                    {/* </AlertDialogTrigger> */}
 
                     <DropdownMenuItem
                       className="flex items-center gap-2"
