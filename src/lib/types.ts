@@ -1,7 +1,22 @@
-import { Notification, Prisma, UserRole } from "@prisma/client";
+import { db } from "./db";
+import {
+  Contact,
+  Lane,
+  Notification,
+  Prisma,
+  Tag,
+  Ticket,
+  UserDetails,
+  UserRole,
+} from "@prisma/client";
 import { getAuthUserDetails } from "@/data/user";
 import { getUserPermissions } from "@/actions/user";
-import { db } from "./db";
+import { getMediaBySubaccountId } from "@/data/subaccount";
+import { getPipelineDetails } from "@/data/pipeline";
+import {
+  _getTicketsWithAllRelations,
+  getTicketsWithTags,
+} from "@/actions/ticket";
 
 export type NotificationWithUser =
   | ({
@@ -41,3 +56,31 @@ export type UsersWithAgencySubAccountPermissionsSidebarOptions =
   Prisma.PromiseReturnType<
     typeof __getUsersWithAgencySubAccountPermissionsSidebarOptions
   >;
+
+export type GetMediaFiles = Prisma.PromiseReturnType<
+  typeof getMediaBySubaccountId
+>;
+
+export type CreateMediaType = Prisma.MediaCreateWithoutSubaccountInput;
+
+export type TicketAndTags = Ticket & {
+  Tags: Tag[];
+  Assigned: UserDetails | null;
+  Customer: Contact | null;
+};
+
+export type LaneDetail = Lane & {
+  Tickets: TicketAndTags[];
+};
+
+export type PipelineDetailsWithLanesCardsTagsTickets = Prisma.PromiseReturnType<
+  typeof getPipelineDetails
+>;
+
+export type TicketWithTags = Prisma.PromiseReturnType<
+  typeof getTicketsWithTags
+>;
+
+export type TicketDetails = Prisma.PromiseReturnType<
+  typeof _getTicketsWithAllRelations
+>;

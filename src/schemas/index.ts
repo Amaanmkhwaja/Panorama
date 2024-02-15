@@ -1,5 +1,40 @@
 import * as z from "zod";
 
+const currencyNumberRegex = /^\d+(\.\d{1,2})?$/;
+
+export const TicketFormSchema = z.object({
+  name: z.string().min(1),
+  description: z.string().optional(),
+  value: z.string().refine((value) => currencyNumberRegex.test(value), {
+    message: "Value must be a valid price.",
+  }),
+});
+
+export const LaneFormSchema = z.object({
+  name: z.string().min(1),
+});
+
+export const CreateFunnelSchema = z.object({
+  name: z.string().min(1),
+  description: z.string(),
+  subDomainName: z.string().optional(),
+  favicon: z.string().optional(),
+});
+
+export const CreatePipelineSchema = z.object({
+  name: z.string().min(1),
+});
+
+export const UploadMediaSchema = z.object({
+  link: z.string().min(1, { message: "Media File is required" }),
+  name: z.string().min(1, { message: "Name is required" }),
+});
+
+export const InviteUserSchema = z.object({
+  email: z.string().email(),
+  role: z.enum(["AGENCY_ADMIN", "SUBACCOUNT_USER", "SUBACCOUNT_GUEST"]),
+});
+
 export const UserDetailsSchema = z.object({
   name: z.string().min(1),
   email: z.string().email(),

@@ -1,7 +1,13 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+
 import clsx from "clsx";
 import { ColumnDef } from "@tanstack/react-table";
+import { Copy, Edit, MoreHorizontal, Trash } from "lucide-react";
+
 import {
   Agency,
   AgencySidebarOption,
@@ -11,9 +17,16 @@ import {
   SubAccount,
   User,
 } from "@prisma/client";
-import Image from "next/image";
+import { getUserDetailsById } from "@/actions/user";
+import { deleteUserbyId } from "@/actions/user";
+import { useModal } from "@/providers/modal-provider";
+import { UsersWithAgencySubAccountPermissionsSidebarOptions } from "@/lib/types";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
+import { CustomModal } from "@/components/global/custom-modal";
+import { UserDetails } from "@/components/forms/user-details";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,18 +46,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
-import { Copy, Edit, MoreHorizontal, Trash } from "lucide-react";
-import { useModal } from "@/providers/modal-provider";
-import { UserDetails } from "@/components/forms/user-details";
-
-import { deleteUserbyId } from "@/actions/user";
-import { getUserById } from "@/data/user";
-import { useToast } from "@/components/ui/use-toast";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { UsersWithAgencySubAccountPermissionsSidebarOptions } from "@/lib/types";
-import { CustomModal } from "@/components/global/custom-modal";
 
 export const columns: ColumnDef<UsersWithAgencySubAccountPermissionsSidebarOptions>[] =
   [
@@ -59,7 +60,7 @@ export const columns: ColumnDef<UsersWithAgencySubAccountPermissionsSidebarOptio
       accessorKey: "name",
       header: "Name",
       cell: ({ row }) => {
-        const avatarUrl = row.getValue("avatarUrl") as string;
+        const avatarUrl = row.getValue("image") as string;
         return (
           <div className="flex items-center gap-4">
             <div className="h-11 w-11 relative flex-none">
@@ -76,7 +77,7 @@ export const columns: ColumnDef<UsersWithAgencySubAccountPermissionsSidebarOptio
       },
     },
     {
-      accessorKey: "avatarUrl",
+      accessorKey: "image",
       header: "",
       cell: () => {
         return null;
@@ -184,7 +185,20 @@ const CellActions: React.FC<CellActionsProps> = ({ rowData }) => {
           <DropdownMenuSeparator />
           <DropdownMenuItem
             className="flex gap-2"
-            onClick={() => {
+            onClick={async () => {
+              // const toastId = toast({
+              //   title: "Loading ...",
+              // });
+              // const userDetails = await getUserDetailsById(rowData?.id);
+              // toastId.dismiss();
+              // if (userDetails.error) {
+              //   toast({
+              //     variant: "destructive",
+              //     title: "Error",
+              //     description: userDetails.error,
+              //   });
+              // }
+              // if (userDetails.success) {
               setOpen(
                 <CustomModal
                   subheading="You can change permissions only when the user has an owned subaccount"
@@ -194,12 +208,30 @@ const CellActions: React.FC<CellActionsProps> = ({ rowData }) => {
                     type="agency"
                     id={rowData?.Agency?.id || null}
                     subAccounts={rowData?.Agency?.SubAccount}
+                    // userData={userDetails.userDetails}
                   />
                 </CustomModal>,
                 async () => {
-                  return { user: await getUserById(rowData?.id) };
+                  const toastId = toast({
+                    title: "Loading ...",
+                  });
+                  const response = await getUserDetailsById(rowData?.id);
+                  toastId.dismiss();
+                  if (response.error) {
+                    if (response.error) {
+                      toast({
+                        variant: "destructive",
+                        title: "Error",
+                        description: response.error,
+                      });
+                    }
+                  }
+                  if (response.success) {
+                    return { user: response.userDetails };
+                  }
                 }
               );
+              // }
             }}
           >
             <Edit size={15} />
@@ -207,6 +239,7 @@ const CellActions: React.FC<CellActionsProps> = ({ rowData }) => {
           </DropdownMenuItem>
           {rowData.role !== "AGENCY_OWNER" && (
             <AlertDialogTrigger asChild>
+              {/* TODO: Be able to remove a user */}
               <DropdownMenuItem className="flex gap-2" onClick={() => {}}>
                 <Trash size={15} /> Remove User
               </DropdownMenuItem>

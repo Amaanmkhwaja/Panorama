@@ -1,10 +1,28 @@
 "use server";
 
 import * as z from "zod";
-import { UserDetails } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { UserDetailsSchema } from "@/schemas";
+
+export const getUserDetailsById = async (id: string) => {
+  if (!id) {
+    return { error: "UserDetails ID is required." };
+  }
+
+  try {
+    const userDetails = await db.userDetails.findUnique({
+      where: { id },
+    });
+    if (!userDetails) {
+      return { error: "Couldn't find user's details." };
+    }
+
+    return { success: "Found user.", userDetails };
+  } catch (error) {
+    return { error: "Something went wrong." };
+  }
+};
 
 export const getAuthUserDetails = async () => {
   try {

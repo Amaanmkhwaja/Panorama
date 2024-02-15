@@ -1,9 +1,10 @@
 "use server";
 
+import * as z from "zod";
 import { currentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { InviteUserSchema } from "@/schemas";
 import { Agency, Plan, UserDetails, UserRole } from "@prisma/client";
-import { redirect } from "next/navigation";
 
 export const updateAgencyDetails = async (
   agencyId: string,
@@ -123,37 +124,50 @@ export const upsertAgency = async (agency: Agency, price?: Plan) => {
 };
 
 export const sendInvitation = async (
-  role: UserRole,
-  email: string,
+  values: z.infer<typeof InviteUserSchema>,
   agencyId: string
 ) => {
-  const response = await db.invitation.create({
-    data: { email, agencyId, role },
-  });
+  const validatedFields = InviteUserSchema.safeParse(values);
+
+  if (!validatedFields.success) {
+    return { error: "Invalid fields!" };
+  }
+  if (!agencyId) {
+    return { error: "Agency ID is required." };
+  }
+
+  const { email, role } = validatedFields.data;
 
   try {
-    const invitation = await db.invitation.create({
+    const userDetailsExist = await db.userDetails.findUnique({
+      where: {
+        email,
+      },
+    });
+    if (userDetailsExist) {
+      return {
+        error:
+          "User already tied with an agency. Users are maxed to 1 agency per account.",
+      };
+    }
+
+    const ifPendingInvite = await db.invitation.findUnique({
+      where: { email },
+    });
+    if (ifPendingInvite) {
+      return { error: "User already has a pending invite!" };
+    }
+
+    await db.invitation.create({
       data: {
         email,
         agencyId,
         role,
       },
     });
-
-    await db.user.update({
-      where: {
-        email,
-      },
-      data: {
-        pendingInvite: true,
-      },
-    });
-
-    redirect("/");
+    return { success: "Invite sent!" };
   } catch (error) {
-    console.log(error);
-    throw error;
+    console.error("sendInvitation error: ", error);
+    return { error: "Something went wrong." };
   }
-
-  return response;
 };

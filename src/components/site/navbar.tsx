@@ -4,7 +4,7 @@ import { currentUser } from "@/lib/auth";
 
 import { UserButton } from "@/components/auth/user-button";
 import { LoginButton } from "@/components/auth/login-button";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import { ModeToggle } from "@/components/global/mode-toggle";
 
@@ -31,6 +31,16 @@ export const Navbar = async () => {
         </ul>
       </nav>
       <aside className="flex gap-2 items-center">
+        {user && (
+          <Link
+            className={buttonVariants({
+              variant: "default",
+            })}
+            href="/agency"
+          >
+            Login
+          </Link>
+        )}
         {user ? (
           <UserButton />
         ) : (

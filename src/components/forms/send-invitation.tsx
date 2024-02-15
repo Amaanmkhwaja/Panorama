@@ -1,13 +1,26 @@
 "use client";
+
 import React from "react";
+
 import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { InviteUserSchema } from "@/schemas";
+import { sendInvitation } from "@/actions/agency";
+import { saveActivityLogsNotification } from "@/actions/notification";
+
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
+import { Loading } from "@/components/global/loading";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../ui/card";
+} from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -15,22 +28,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../ui/form";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "../ui/input";
+} from "@/components/ui/form";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
-import { Button } from "../ui/button";
-import { Loading } from "../global/loading";
-import { sendInvitation } from "@/actions/agency";
-import { saveActivityLogsNotification } from "@/actions/notification";
-import { useToast } from "../ui/use-toast";
+} from "@/components/ui/select";
 
 interface SendInvitationProps {
   agencyId: string;
@@ -38,13 +43,9 @@ interface SendInvitationProps {
 
 const SendInvitation: React.FC<SendInvitationProps> = ({ agencyId }) => {
   const { toast } = useToast();
-  const userDataSchema = z.object({
-    email: z.string().email(),
-    role: z.enum(["AGENCY_ADMIN", "SUBACCOUNT_USER", "SUBACCOUNT_GUEST"]),
-  });
 
-  const form = useForm<z.infer<typeof userDataSchema>>({
-    resolver: zodResolver(userDataSchema),
+  const form = useForm<z.infer<typeof InviteUserSchema>>({
+    resolver: zodResolver(InviteUserSchema),
     mode: "onChange",
     defaultValues: {
       email: "",
@@ -52,18 +53,29 @@ const SendInvitation: React.FC<SendInvitationProps> = ({ agencyId }) => {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof userDataSchema>) => {
+  const onSubmit = async (values: z.infer<typeof InviteUserSchema>) => {
     try {
-      const res = await sendInvitation(values.role, values.email, agencyId);
-      await saveActivityLogsNotification({
-        agencyId: agencyId,
-        description: `Invited ${res.email}`,
-        subaccountId: undefined,
-      });
-      toast({
-        title: "Success",
-        description: "Created and sent invitation",
-      });
+      const res = await sendInvitation(values, agencyId);
+      if (res.success) {
+        await saveActivityLogsNotification({
+          agencyId: agencyId,
+          description: `Invited ${values.email}`,
+          subaccountId: undefined,
+        });
+        toast({
+          variant: "success",
+          title: "Success",
+          description: res.success,
+          duration: 6000,
+        });
+      }
+      if (res.error) {
+        toast({
+          variant: "destructive",
+          title: "Error!",
+          description: res.error,
+        });
+      }
     } catch (error) {
       console.log(error);
       toast({
