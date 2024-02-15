@@ -28,7 +28,7 @@ const SettingsPage = async ({ params }: SettingsPageProps) => {
   const subAccounts = agencyDetails.SubAccount;
 
   return (
-    <div className="flex flex-col lg:flex-row gap-4">
+    <div className="flex flex-row lg:!flex-row gap-4">
       <AgencyDetails data={agencyDetails} />
       <UserDetails
         type="agency"
