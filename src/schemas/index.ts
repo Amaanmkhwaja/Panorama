@@ -1,5 +1,10 @@
 import * as z from "zod";
 
+export const UploadMediaSchema = z.object({
+  link: z.string().min(1, { message: "Media File is required" }),
+  name: z.string().min(1, { message: "Name is required" }),
+});
+
 export const InviteUserSchema = z.object({
   email: z.string().email(),
   role: z.enum(["AGENCY_ADMIN", "SUBACCOUNT_USER", "SUBACCOUNT_GUEST"]),

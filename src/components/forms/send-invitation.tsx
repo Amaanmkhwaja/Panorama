@@ -66,6 +66,7 @@ const SendInvitation: React.FC<SendInvitationProps> = ({ agencyId }) => {
           variant: "success",
           title: "Success",
           description: res.success,
+          duration: 6000,
         });
       }
       if (res.error) {

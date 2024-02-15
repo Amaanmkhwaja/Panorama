@@ -156,7 +156,7 @@ export const MenuOptions = ({
                                   className="rounded-md object-contain"
                                 />
                               </div>
-                              <div className="flex flex-col flex-1">
+                              <div className="flex flex-col flex-1 text-black dark:text-white">
                                 {user?.Agency?.name}
                                 <span className="text-muted-foreground">
                                   {user?.Agency?.address}

@@ -11,11 +11,9 @@ export const getUserDetailsById = async (id: string) => {
   }
 
   try {
-    console.log(id);
     const userDetails = await db.userDetails.findUnique({
       where: { id },
     });
-    console.log({ userDetails });
     if (!userDetails) {
       return { error: "Couldn't find user's details." };
     }

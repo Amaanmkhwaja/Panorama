@@ -17,26 +17,24 @@ const SubAccountPage = async ({ searchParams }: SubAccountPageProps) => {
   const user = await getAuthUserDetails();
   if (!user) return null;
 
-  return <div>SubbAcountMainPage</div>;
+  const getFirstSubaccountWithAccess = user.Permissions.find(
+    (permission) => permission.access === true
+  );
 
-  // const getFirstSubaccountWithAccess = user.Permissions.find(
-  //   (permission) => permission.access === true
-  // );
+  if (searchParams.state) {
+    const statePath = searchParams.state.split("___")[0];
+    const stateSubaccountId = searchParams.state.split("___")[1];
+    if (!stateSubaccountId) return <Unauthorized />;
+    return redirect(
+      `/subaccount/${stateSubaccountId}/${statePath}?code=${searchParams.code}`
+    );
+  }
 
-  // if (searchParams.state) {
-  //   const statePath = searchParams.state.split("___")[0];
-  //   const stateSubaccountId = searchParams.state.split("___")[1];
-  //   if (!stateSubaccountId) return <Unauthorized />;
-  //   return redirect(
-  //     `/subaccount/${stateSubaccountId}/${statePath}?code=${searchParams.code}`
-  //   );
-  // }
+  if (getFirstSubaccountWithAccess) {
+    return redirect(`/subaccount/${getFirstSubaccountWithAccess.subAccountId}`);
+  }
 
-  // if (getFirstSubaccountWithAccess) {
-  //   return redirect(`/subaccount/${getFirstSubaccountWithAccess.subAccountId}`);
-  // }
-
-  // return <Unauthorized />;
+  return <Unauthorized />;
 };
 
 export default SubAccountPage;

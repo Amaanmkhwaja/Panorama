@@ -29,6 +29,8 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
       name,
       email,
       password: hashedPassword,
+      image:
+        "https://utfs.io/f/973e016a-44fe-4142-b9d1-de18c64a456f-77ybic.jpg",
     },
   });
 

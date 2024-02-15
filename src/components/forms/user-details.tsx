@@ -67,10 +67,6 @@ export const UserDetails = ({
   subAccounts,
   userData,
 }: UserDetailsProps) => {
-  console.log({ id });
-  console.log({ type });
-  console.log({ subAccounts });
-  console.log({ userData });
   const [subAccountPermissions, setSubAccountsPermissions] =
     useState<UserWithPermissionsAndSubAccounts | null>(null);
 

@@ -2,6 +2,7 @@ import { Notification, Prisma, UserRole } from "@prisma/client";
 import { getAuthUserDetails } from "@/data/user";
 import { getUserPermissions } from "@/actions/user";
 import { db } from "./db";
+import { getMediaBySubaccountId } from "@/data/subaccount";
 
 export type NotificationWithUser =
   | ({
@@ -41,3 +42,9 @@ export type UsersWithAgencySubAccountPermissionsSidebarOptions =
   Prisma.PromiseReturnType<
     typeof __getUsersWithAgencySubAccountPermissionsSidebarOptions
   >;
+
+export type GetMediaFiles = Prisma.PromiseReturnType<
+  typeof getMediaBySubaccountId
+>;
+
+export type CreateMediaType = Prisma.MediaCreateWithoutSubaccountInput;

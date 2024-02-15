@@ -1,26 +1,28 @@
-import { InfoBar } from "@/components/info-bar";
-import { Sidebar } from "@/components/sidebar/sidebar";
-import { Unauthorized } from "@/components/unauthorized";
+import React from "react";
+import { redirect } from "next/navigation";
+
+import { currentUser } from "@/lib/auth";
+import { getAuthUserDetails } from "@/data/user";
 import { verifyAndAcceptInvitation } from "@/data/agency";
 import { getNotificationAndUser } from "@/data/notification";
-import { getAuthUserDetails } from "@/data/user";
-import { currentRole, currentUser } from "@/lib/auth";
-import { redirect } from "next/navigation";
-import { BlurPage } from "@/components/blur-page";
-import React from "react";
 
-type SubaccountIdLayoutProps = {
+import { InfoBar } from "@/components/info-bar";
+import { BlurPage } from "@/components/blur-page";
+import { Sidebar } from "@/components/sidebar/sidebar";
+import { Unauthorized } from "@/components/unauthorized";
+
+interface SubaccountIdLayoutProps {
   children: React.ReactNode;
   params: { subaccountId: string };
-};
+}
 
 const SubaccountLayout = async ({
   children,
   params,
 }: SubaccountIdLayoutProps) => {
-  const userRole = await currentRole();
   const agencyId = await verifyAndAcceptInvitation();
   if (!agencyId) return <Unauthorized />;
+
   const user = await currentUser();
   if (!user) {
     return redirect("/");
@@ -28,7 +30,7 @@ const SubaccountLayout = async ({
 
   let notifications: any = [];
 
-  if (!userRole) {
+  if (!user.role) {
     return <Unauthorized />;
   } else {
     const allPermissions = await getAuthUserDetails();
@@ -42,7 +44,7 @@ const SubaccountLayout = async ({
 
     const allNotifications = await getNotificationAndUser(agencyId);
 
-    if (userRole === "AGENCY_ADMIN" || userRole === "AGENCY_OWNER") {
+    if (user.role === "AGENCY_ADMIN" || user.role === "AGENCY_OWNER") {
       notifications = allNotifications;
     } else {
       const filteredNoti = allNotifications?.filter(
@@ -59,7 +61,7 @@ const SubaccountLayout = async ({
       <div className="md:pl-[300px]">
         <InfoBar
           notifications={notifications}
-          role={userRole}
+          role={user.role}
           subAccountId={params.subaccountId as string}
         />
         <div className="relative">

@@ -139,6 +139,18 @@ export const sendInvitation = async (
   const { email, role } = validatedFields.data;
 
   try {
+    const userDetailsExist = await db.userDetails.findUnique({
+      where: {
+        email,
+      },
+    });
+    if (userDetailsExist) {
+      return {
+        error:
+          "User already tied with an agency. Users are maxed to 1 agency per account.",
+      };
+    }
+
     const ifPendingInvite = await db.invitation.findUnique({
       where: { email },
     });
