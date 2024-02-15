@@ -1,8 +1,9 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { Prisma } from "@prisma/client";
+import { Lane, Prisma, Ticket } from "@prisma/client";
 import { v4 as uuid } from "uuid";
+import { toast } from "sonner";
 
 export const getPipelineDetails = async (pipelineId: string) => {
   try {
@@ -22,7 +23,7 @@ export const upsertPipeline = async (
   pipeline: Prisma.PipelineUncheckedCreateWithoutLaneInput
 ) => {
   if (!pipeline) {
-    return { error: "Invalid fields." };
+    return { error: "🔴 Invalid fields." };
   }
 
   try {
@@ -34,13 +35,13 @@ export const upsertPipeline = async (
 
     return { success: "Saved pipeline details", pipeline: pipelineSaved };
   } catch (error) {
-    return { error: "Something went wrong." };
+    return { error: "🔴 Something went wrong." };
   }
 };
 
 export const deletePipeline = async (pipelineId: string) => {
   if (!pipelineId) {
-    return { error: "Missing Pipeline ID" };
+    return { error: "🔴 Missing Pipeline ID" };
   }
 
   try {
@@ -49,7 +50,7 @@ export const deletePipeline = async (pipelineId: string) => {
     });
     return { success: "Deleted pipeline!", deletedPipeline };
   } catch (error) {
-    return { error: "Something went wrong." };
+    return { error: "🔴 Something went wrong." };
   }
 };
 
@@ -81,6 +82,59 @@ export const upsertLane = async (lane: Prisma.LaneUncheckedCreateInput) => {
 
     return { success: "Saved lane info.", savedLane };
   } catch (error) {
-    return { error: "Something went wrong." };
+    return { error: "🔴 Something went wrong." };
+  }
+};
+
+export const updateLanesOrder = async (lanes: Lane[]) => {
+  if (!lanes) {
+    toast.error("🔴 Missing 'lanes' field.");
+    return;
+  }
+
+  try {
+    const updateTrans = lanes.map((lane) =>
+      db.lane.update({
+        where: {
+          id: lane.id,
+        },
+        data: {
+          order: lane.order,
+        },
+      })
+    );
+
+    await db.$transaction(updateTrans);
+    console.log("🟢 Done reordered 🟢");
+  } catch (error) {
+    console.log(error, "🔴 ERROR UPDATE LANES ORDER");
+    toast.error("🔴 ERROR UPDATE LANES ORDER");
+  }
+};
+
+export const updateTicketsOrder = async (tickets: Ticket[]) => {
+  if (!tickets) {
+    toast.error("🔴 Missing 'tickets' field.");
+    return;
+  }
+
+  try {
+    const updateTrans = tickets.map((ticket) =>
+      db.ticket.update({
+        where: {
+          id: ticket.id,
+        },
+        data: {
+          order: ticket.order,
+          laneId: ticket.laneId,
+        },
+      })
+    );
+
+    await db.$transaction(updateTrans);
+    console.log("🟢 Done reordered 🟢");
+  } catch (error) {
+    console.log(error, "🔴 ERROR UPDATE TICKET ORDER");
+    toast.error("🔴 ERROR UPDATE TICKET ORDER");
   }
 };

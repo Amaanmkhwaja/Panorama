@@ -1,13 +1,15 @@
 import { redirect } from "next/navigation";
 
-import { getLanesWithTicketAndTags, getPipelineDetails } from "@/data/pipeline";
 import { db } from "@/lib/db";
 import { LaneDetail } from "@/lib/types";
+import { getLanesWithTicketAndTags, getPipelineDetails } from "@/data/pipeline";
+import { updateLanesOrder, updateTicketsOrder } from "@/actions/pipeline";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { PipelineInfoBar } from "../_components/pipeline-infobar";
 import { PipelineSettings } from "../_components/pipeline-settings";
+import { PipelineView } from "../_components/pipeline-view";
 
 interface PipelineIdPageProps {
   params: { subaccountId: string; pipelineId: string };
@@ -40,7 +42,16 @@ const PipelineIdPage = async ({ params }: PipelineIdPageProps) => {
           <TabsTrigger value="settings">Settings</TabsTrigger>
         </div>
       </TabsList>
-      <TabsContent value="view"></TabsContent>
+      <TabsContent value="view">
+        <PipelineView
+          lanes={lanes}
+          pipelineDetails={pipelineDetails}
+          pipelineId={params.pipelineId}
+          subaccountId={params.subaccountId}
+          updateLanesOrder={updateLanesOrder}
+          updateTicketsOrder={updateTicketsOrder}
+        />
+      </TabsContent>
       <TabsContent value="settings">
         <PipelineSettings
           pipelineId={params.pipelineId}
