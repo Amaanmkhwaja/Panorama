@@ -9,7 +9,7 @@ const SubaccountIdPage = async ({
   params,
   searchParams,
 }: SubaccountIdPageProps) => {
-  return <div>SubaccountIdPageProps</div>;
+  return <div>SubaccountIdPageId</div>;
 };
 
 export default SubaccountIdPage;

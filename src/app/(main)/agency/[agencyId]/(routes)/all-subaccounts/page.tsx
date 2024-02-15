@@ -92,7 +92,7 @@ const AllSubaccountsPage = async ({ params }: AllSubaccountsPageProps) => {
                           Are your absolutely sure
                         </AlertDialogTitle>
                         <AlertDescription className="text-left">
-                          This action cannot be undon. This will delete the
+                          This action cannot be undone. This will delete the
                           subaccount and all data related to the subaccount.
                         </AlertDescription>
                       </AlertDialogHeader>

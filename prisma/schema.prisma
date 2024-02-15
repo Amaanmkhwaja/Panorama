@@ -38,6 +38,7 @@ model User {
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
   userDetails   UserDetails?
+  pendingInvite Boolean      @default(false)      
 }
 
 model UserDetails {
