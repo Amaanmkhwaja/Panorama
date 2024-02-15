@@ -36,6 +36,9 @@ export const createTeamUser = async (agencyId: string, user: UserDetails) => {
     const response = await db.userDetails.create({
       data: {
         ...user,
+        image:
+          user.image ||
+          "https://utfs.io/f/973e016a-44fe-4142-b9d1-de18c64a456f-77ybic.jpg",
       },
     });
 

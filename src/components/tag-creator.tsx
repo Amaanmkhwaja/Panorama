@@ -42,7 +42,7 @@ interface TagCreatorProps {
 const TagColors = ["BLUE", "ORANGE", "ROSE", "PURPLE", "GREEN"] as const;
 export type TagColor = (typeof TagColors)[number];
 
-const TagCreator = ({
+export const TagCreator = ({
   getSelectedTags,
   subAccountId,
   defaultTags,
@@ -232,5 +232,3 @@ const TagCreator = ({
     </AlertDialog>
   );
 };
-
-export default TagCreator;
