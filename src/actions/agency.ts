@@ -2,7 +2,8 @@
 
 import { currentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { Agency, Plan, UserDetails } from "@prisma/client";
+import { Agency, Plan, UserDetails, UserRole } from "@prisma/client";
+import { redirect } from "next/navigation";
 
 export const updateAgencyDetails = async (
   agencyId: string,
@@ -44,8 +45,8 @@ export const initUser = async (newUser: Partial<UserDetails>) => {
     update: newUser,
     create: {
       image: user.image,
-      email: user.email,
-      name: user.name,
+      email: user.email!,
+      name: user.name || "",
       role: newUser.role || "SUBACCOUNT_USER",
       userId: user.id!,
     },
@@ -119,4 +120,40 @@ export const upsertAgency = async (agency: Agency, price?: Plan) => {
     console.error("upsertAgency server action error: ", error);
     return { error: "Something went wrong." };
   }
+};
+
+export const sendInvitation = async (
+  role: UserRole,
+  email: string,
+  agencyId: string
+) => {
+  const response = await db.invitation.create({
+    data: { email, agencyId, role },
+  });
+
+  try {
+    const invitation = await db.invitation.create({
+      data: {
+        email,
+        agencyId,
+        role,
+      },
+    });
+
+    await db.user.update({
+      where: {
+        email,
+      },
+      data: {
+        pendingInvite: true,
+      },
+    });
+
+    redirect("/");
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+
+  return response;
 };
