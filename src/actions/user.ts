@@ -107,3 +107,22 @@ export const changeUserPermissions = async (
     return { error: "🔴Could not change persmission" };
   }
 };
+
+export const deleteUser = async (userId: string) => {
+  try {
+    // Delete the user details
+    await db.userDetails.delete({
+      where: { id: userId },
+    });
+
+    // Delete the user
+    await db.user.delete({
+      where: { id: userId },
+    });
+
+    return { success: "User deleted successfully." };
+  } catch (error) {
+    console.error("deleteUser server action error: ", error);
+    return { error: "Something went wrong while deleting the user." };
+  }
+};
