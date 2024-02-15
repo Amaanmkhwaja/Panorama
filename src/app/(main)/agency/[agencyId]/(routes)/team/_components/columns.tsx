@@ -38,7 +38,7 @@ import { Copy, Edit, MoreHorizontal, Trash } from "lucide-react";
 import { useModal } from "@/providers/modal-provider";
 import { UserDetails } from "@/components/forms/user-details";
 
-import { deleteUser } from "@/actions/user";
+import { deleteUserbyId } from "@/actions/user";
 import { getUserById } from "@/data/user";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
@@ -231,7 +231,7 @@ const CellActions: React.FC<CellActionsProps> = ({ rowData }) => {
             className="bg-destructive hover:bg-destructive"
             onClick={async () => {
               setLoading(true);
-              await deleteUser(rowData.id);
+              await deleteUserbyId(rowData.id);
               toast({
                 title: "Deleted User",
                 description:
