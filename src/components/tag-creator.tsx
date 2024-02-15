@@ -1,7 +1,26 @@
 "use client";
-import { Tag } from "@prisma/client";
-import { useRouter } from "next/navigation";
+
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+
+import { PlusCircleIcon, TrashIcon, X } from "lucide-react";
+import { v4 } from "uuid";
+import { Tag } from "@prisma/client";
+
+import { saveActivityLogsNotification } from "@/actions/notification";
+import { deleteTag, getTagsForSubaccount, upsertTag } from "@/actions/ticket";
+
+import { TagComponent } from "@/components/tag";
+import { toast } from "@/components/ui/use-toast";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+} from "@/components/ui/command";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,27 +32,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { TagComponent } from "@/components/tag";
-import { PlusCircleIcon, TrashIcon, X } from "lucide-react";
-import { toast } from "@/components/ui/use-toast";
-import { v4 } from "uuid";
-// import {
-//   deleteTag,
-//   getTagsForSubaccount,
-//   saveActivityLogsNotification,
-//   upsertTag,
-// } from '@/lib/queries'
-import { saveActivityLogsNotification } from "@/actions/notification";
-
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-} from "@/components/ui/command";
 
 interface TagCreatorProps {
   subAccountId: string;
