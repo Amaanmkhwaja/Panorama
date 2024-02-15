@@ -186,44 +186,52 @@ const CellActions: React.FC<CellActionsProps> = ({ rowData }) => {
           <DropdownMenuItem
             className="flex gap-2"
             onClick={async () => {
-              const userDetails = await getUserDetailsById(rowData?.id);
-              if (userDetails.error) {
-                toast({
-                  variant: "destructive",
-                  title: "Error",
-                  description: userDetails.error,
-                });
-              }
-              if (userDetails.success) {
-                setOpen(
-                  <CustomModal
-                    subheading="You can change permissions only when the user has an owned subaccount"
-                    title="Edit User Details"
-                  >
-                    <UserDetails
-                      type="agency"
-                      id={rowData?.Agency?.id || null}
-                      subAccounts={rowData?.Agency?.SubAccount}
-                      userData={userDetails.userDetails}
-                    />
-                  </CustomModal>
-                  // async () => {
-                  //   const response = await getUserDetailsById(rowData?.id);
-                  //   if (response.error) {
-                  //     if (response.error) {
-                  //       toast({
-                  //         variant: "destructive",
-                  //         title: "Error",
-                  //         description: response.error,
-                  //       });
-                  //     }
-                  //   }
-                  //   if (response.success) {
-                  //     return { user: response.userDetails };
-                  //   }
-                  // }
-                );
-              }
+              // const toastId = toast({
+              //   title: "Loading ...",
+              // });
+              // const userDetails = await getUserDetailsById(rowData?.id);
+              // toastId.dismiss();
+              // if (userDetails.error) {
+              //   toast({
+              //     variant: "destructive",
+              //     title: "Error",
+              //     description: userDetails.error,
+              //   });
+              // }
+              // if (userDetails.success) {
+              setOpen(
+                <CustomModal
+                  subheading="You can change permissions only when the user has an owned subaccount"
+                  title="Edit User Details"
+                >
+                  <UserDetails
+                    type="agency"
+                    id={rowData?.Agency?.id || null}
+                    subAccounts={rowData?.Agency?.SubAccount}
+                    // userData={userDetails.userDetails}
+                  />
+                </CustomModal>,
+                async () => {
+                  const toastId = toast({
+                    title: "Loading ...",
+                  });
+                  const response = await getUserDetailsById(rowData?.id);
+                  toastId.dismiss();
+                  if (response.error) {
+                    if (response.error) {
+                      toast({
+                        variant: "destructive",
+                        title: "Error",
+                        description: response.error,
+                      });
+                    }
+                  }
+                  if (response.success) {
+                    return { user: response.userDetails };
+                  }
+                }
+              );
+              // }
             }}
           >
             <Edit size={15} />
