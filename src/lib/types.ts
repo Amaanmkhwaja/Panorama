@@ -1,3 +1,4 @@
+import { db } from "./db";
 import {
   Contact,
   Lane,
@@ -10,9 +11,9 @@ import {
 } from "@prisma/client";
 import { getAuthUserDetails } from "@/data/user";
 import { getUserPermissions } from "@/actions/user";
-import { db } from "./db";
 import { getMediaBySubaccountId } from "@/data/subaccount";
 import { getPipelineDetails } from "@/data/pipeline";
+import { getTicketsWithTags } from "@/actions/ticket";
 
 export type NotificationWithUser =
   | ({
@@ -71,4 +72,8 @@ export type LaneDetail = Lane & {
 
 export type PipelineDetailsWithLanesCardsTagsTickets = Prisma.PromiseReturnType<
   typeof getPipelineDetails
+>;
+
+export type TicketWithTags = Prisma.PromiseReturnType<
+  typeof getTicketsWithTags
 >;

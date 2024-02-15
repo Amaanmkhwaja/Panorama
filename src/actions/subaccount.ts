@@ -128,3 +128,25 @@ export const deleteSubAccountById = async (id: string) => {
   });
   return { success: "Deleted Sub Account" };
 };
+
+export const getSubAccountTeamMembers = async (subaccountId: string) => {
+  const subaccountUsersWithAccess = await db.userDetails.findMany({
+    where: {
+      Agency: {
+        SubAccount: {
+          some: {
+            id: subaccountId,
+          },
+        },
+      },
+      role: "SUBACCOUNT_USER",
+      Permissions: {
+        some: {
+          subAccountId: subaccountId,
+          access: true,
+        },
+      },
+    },
+  });
+  return subaccountUsersWithAccess;
+};
