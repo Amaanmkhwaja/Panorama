@@ -108,7 +108,11 @@ export const changeUserPermissions = async (
   }
 };
 
-export const deleteUser = async (userId: string) => {
+export const deleteUserbyId = async (userId: string) => {
+  if (!userId) {
+    return { error: "Subaccount ID is required." };
+  }
+
   try {
     // Delete the user details
     await db.userDetails.delete({
