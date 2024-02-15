@@ -1,4 +1,13 @@
-import { Notification, Prisma, UserRole } from "@prisma/client";
+import {
+  Contact,
+  Lane,
+  Notification,
+  Prisma,
+  Tag,
+  Ticket,
+  UserDetails,
+  UserRole,
+} from "@prisma/client";
 import { getAuthUserDetails } from "@/data/user";
 import { getUserPermissions } from "@/actions/user";
 import { db } from "./db";
@@ -48,3 +57,13 @@ export type GetMediaFiles = Prisma.PromiseReturnType<
 >;
 
 export type CreateMediaType = Prisma.MediaCreateWithoutSubaccountInput;
+
+export type TicketAndTags = Ticket & {
+  Tags: Tag[];
+  Assigned: UserDetails | null;
+  Customer: Contact | null;
+};
+
+export type LaneDetail = Lane & {
+  Tickets: TicketAndTags[];
+};

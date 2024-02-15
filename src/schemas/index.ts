@@ -1,5 +1,16 @@
 import * as z from "zod";
 
+export const CreateFunnelSchema = z.object({
+  name: z.string().min(1),
+  description: z.string(),
+  subDomainName: z.string().optional(),
+  favicon: z.string().optional(),
+});
+
+export const CreatePipelineSchema = z.object({
+  name: z.string().min(1),
+});
+
 export const UploadMediaSchema = z.object({
   link: z.string().min(1, { message: "Media File is required" }),
   name: z.string().min(1, { message: "Name is required" }),
