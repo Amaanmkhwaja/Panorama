@@ -15,6 +15,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { SubscriptionFormWrapper } from "@/components/forms/subscription-form/subscription-form-wrapper";
 
 interface PriceCardProps {
   features: string[];
@@ -50,11 +51,20 @@ export const PriceCard = ({
   const handleManagePlanClick = async () => {
     setOpen(
       <CustomModal
-        title="Manage your plan"
+        title="Manage Your Plan"
         subheading="You can change your plan at any time from the billings settings."
       >
-        <div>Form</div>
-      </CustomModal>
+        <SubscriptionFormWrapper
+          customerId={customerId}
+          planExists={planExists}
+        />
+      </CustomModal>,
+      async () => ({
+        plans: {
+          defaultPriceId: plan ? plan : "",
+          plans: prices,
+        },
+      })
     );
   };
 
