@@ -4,10 +4,14 @@
  * @type {string[]}
  */
 export const publicRoutes = [
-  "/",
+  // "/",
   "/site",
   "/agency/auth/new-verification",
   "/api/uploadthing",
+  "/api/stripe/webhook",
+  "/api/stripe/create-checkout-session",
+  "/api/stripe/create-customer",
+  "/api/stripe/create-subscription",
 ];
 
 /**

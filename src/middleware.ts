@@ -15,10 +15,16 @@ export default auth((req) => {
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
 
-  // the order of these if statements matter
+  if (
+    nextUrl.pathname === "/" ||
+    (nextUrl.pathname === "/site" &&
+      nextUrl.host === process.env.NEXT_PUBLIC_DOMAIN)
+  ) {
+    return NextResponse.rewrite(new URL("/site", nextUrl));
+  }
 
   // checking if it is API auth route
-  if (isApiAuthRoute) {
+  if (isApiAuthRoute || isPublicRoute) {
     return NextResponse.next();
   }
 
@@ -70,14 +76,6 @@ export default auth((req) => {
   // if the subdomain doesnt exist then we are going to the next stage
   if (nextUrl.pathname === "/sign-in" || nextUrl.pathname === "/register") {
     return NextResponse.redirect(new URL("/agency/sign-in", req.url));
-  }
-
-  if (
-    nextUrl.pathname === "/" ||
-    (nextUrl.pathname === "/site" &&
-      nextUrl.host === process.env.NEXT_PUBLIC_DOMAIN)
-  ) {
-    return NextResponse.rewrite(new URL("/site", nextUrl));
   }
 
   if (
