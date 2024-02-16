@@ -30,7 +30,7 @@ export const CustomModal = ({
 
   return (
     <Dialog open={isOpen || defaultOpen} onOpenChange={setClose}>
-      <DialogContent className="overflow-scroll h-screen md:max-h-[700px] md:h-fit bg-card">
+      <DialogContent className="overflow-auto h-screen md:max-h-[700px] md:h-fit bg-card">
         <DialogHeader className="pt-8 text-left">
           <DialogTitle className="text-2xl font-bold">{title}</DialogTitle>
           <DialogDescription>{subheading}</DialogDescription>

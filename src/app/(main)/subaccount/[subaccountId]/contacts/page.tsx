@@ -66,8 +66,10 @@ const SubaccountContactsPage = async ({
 
   return (
     <>
-      <h1 className="text-4xl p-4">Contacts</h1>
-      {/* <CreateContactButton subaccountId={params.subaccountId} /> */}
+      <div className="w-full flex items-center justify-between">
+        <h1 className="text-4xl p-4">Contacts</h1>
+        <CreateContactButton subaccountId={params.subaccountId} />
+      </div>
       <Table>
         <TableHeader>
           <TableRow>
