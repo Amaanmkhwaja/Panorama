@@ -13,6 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { CreateContactButton } from "./_components/create-contact-button";
 
 interface SubaccountContactsPageProps {
   params: { subaccountId: string };
@@ -66,6 +67,7 @@ const SubaccountContactsPage = async ({
   return (
     <>
       <h1 className="text-4xl p-4">Contacts</h1>
+      {/* <CreateContactButton subaccountId={params.subaccountId} /> */}
       <Table>
         <TableHeader>
           <TableRow>

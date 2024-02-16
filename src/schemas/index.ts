@@ -1,5 +1,10 @@
 import * as z from "zod";
 
+export const ContactFormSchema = z.object({
+  name: z.string().min(1, "Required"),
+  email: z.string().email(),
+});
+
 const currencyNumberRegex = /^\d+(\.\d{1,2})?$/;
 
 export const TicketFormSchema = z.object({
