@@ -38,7 +38,7 @@ model User {
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
   userDetails   UserDetails?
-  pendingInvite Boolean      @default(false)      
+  pendingInvite Boolean      @default(false)
 }
 
 model UserDetails {
@@ -429,8 +429,8 @@ model Notification {
 }
 
 enum Plan {
-  price_1OYxkqFj9oKEERu1NbKUxXxN
-  price_1OYxkqFj9oKEERu1KfJGWxgN
+  price_1OkKy4LVd2QtUeGnRG3BuydV
+  price_1OkKy4LVd2QtUeGnUbo7Z03c
 }
 
 model Subscription {

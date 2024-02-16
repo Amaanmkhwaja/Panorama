@@ -66,10 +66,10 @@ export const initUser = async (newUser: Partial<UserDetails>) => {
 };
 
 export const upsertAgency = async (agency: Agency, price?: Plan) => {
-  if (!agency.companyEmail) return null;
+  if (!agency.companyEmail) return { error: "Missing company email!" };
 
   try {
-    const agencyDetails = await db.agency.upsert({
+    await db.agency.upsert({
       where: {
         id: agency.id,
       },
