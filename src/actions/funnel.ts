@@ -3,14 +3,14 @@
 import * as z from "zod";
 import { v4 as uuid } from "uuid";
 import { db } from "@/lib/db";
-import { CreateFunnelSchema } from "@/schemas";
+import { FunnelSchema } from "@/schemas";
 
 export const upsertFunnel = async (
   subaccountId: string,
-  funnel: z.infer<typeof CreateFunnelSchema> & { liveProducts: string },
+  funnel: z.infer<typeof FunnelSchema> & { liveProducts: string },
   funnelId: string
 ) => {
-  const validatedFields = CreateFunnelSchema.safeParse(funnel);
+  const validatedFields = FunnelSchema.safeParse(funnel);
 
   if (!validatedFields.success || !subaccountId || !funnelId) {
     return { error: "Invalid fields!" };
@@ -33,4 +33,13 @@ export const upsertFunnel = async (
   } catch (error) {
     return { error: "Something went wrong." };
   }
+};
+
+export const getFunnels = async (subaccountId: string) => {
+  const funnels = await db.funnel.findMany({
+    where: { subAccountId: subaccountId },
+    include: { FunnelPages: true },
+  });
+
+  return funnels;
 };

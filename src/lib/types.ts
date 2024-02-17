@@ -17,6 +17,7 @@ import {
   _getTicketsWithAllRelations,
   getTicketsWithTags,
 } from "@/actions/ticket";
+import { getFunnels } from "@/actions/funnel";
 
 import Stripe from "stripe";
 
@@ -108,3 +109,9 @@ export type StripeCustomerType = {
 };
 
 export type PricesList = Stripe.ApiList<Stripe.Price>;
+
+export type FunnelsForSubAccount = Prisma.PromiseReturnType<
+  typeof getFunnels
+>[0];
+
+export type UpsertFunnelPage = Prisma.FunnelPageCreateWithoutFunnelInput;
