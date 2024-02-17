@@ -313,6 +313,11 @@ const editorReducer = (
       }
       return state;
 
+    // case "LOAD_LOCALSTORAGE":
+    //   const dataFromStorage = localStorage.getItem(action.payload.funnelPageId);
+    //   if (dataFromStorage) return JSON.parse(dataFromStorage)
+    //   else return state
+
     case "LOAD_DATA":
       return {
         ...initialState,
