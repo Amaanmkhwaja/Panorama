@@ -116,7 +116,7 @@ export const upsertAgency = async (agency: Agency, price?: Plan) => {
       },
     });
 
-    return { success: "Created agency!" };
+    return { success: "Agency details saved!" };
   } catch (error) {
     console.error("upsertAgency server action error: ", error);
     return { error: "Something went wrong." };

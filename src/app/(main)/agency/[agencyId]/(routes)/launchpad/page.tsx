@@ -62,9 +62,10 @@ const LaunchPadPage = async ({ params, searchParams }: LaunchPadPageProps) => {
           data: { connectAccountId: response.stripe_user_id },
         });
         connectedStripeAccount = true;
-        toast.success("Connected your stripe account!", { duration: 5000 });
+        // toast.success("Connected your stripe account!", { duration: 5000 });
+        console.log("Connected your stripe account!!");
       } catch (error) {
-        toast.error("Could not connect stripe account.", { duration: 5000 });
+        // toast.error("Could not connect stripe account.", { duration: 5000 });
         console.log("🔴 Could not connect stripe account");
       }
     }

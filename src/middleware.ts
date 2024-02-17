@@ -14,6 +14,8 @@ export default auth((req) => {
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
+  // console.log("=======================================================");
+  // console.log("middleware: '" + nextUrl.pathname + "'");
 
   if (
     nextUrl.pathname === "/" ||
@@ -60,6 +62,7 @@ export default auth((req) => {
   const pathWithSearchParams = `${nextUrl.pathname}${
     searchParams.length > 0 ? `${searchParams}` : ""
   }`;
+  // console.log("searchParams: " + searchParams);
 
   // if subdomain exists
   const customSubdomain = hostname
@@ -68,23 +71,27 @@ export default auth((req) => {
     .filter(Boolean)[0];
 
   if (customSubdomain) {
+    // console.log("customSubdomain: ", customSubdomain);
     return NextResponse.rewrite(
-      new URL(`/${customSubdomain}${pathWithSearchParams}`, req.url)
+      new URL(`/${customSubdomain}${pathWithSearchParams}`, nextUrl)
     );
   }
 
   // if the subdomain doesnt exist then we are going to the next stage
   if (nextUrl.pathname === "/sign-in" || nextUrl.pathname === "/register") {
-    return NextResponse.redirect(new URL("/agency/sign-in", req.url));
+    return NextResponse.redirect(new URL("/agency/sign-in", nextUrl));
   }
 
   if (
     nextUrl.pathname.startsWith("/agency") ||
     nextUrl.pathname.startsWith("/subaccount")
   ) {
-    return NextResponse.rewrite(new URL(`${pathWithSearchParams}`, req.url));
+    console.log("reached /agency or /subaccount");
+    // return NextResponse.rewrite(new URL(`${pathWithSearchParams}`, nextUrl));
   }
 
+  // console.log("reached end of middleware");
+  // console.log("=======================================================");
   return NextResponse.next();
 });
 
