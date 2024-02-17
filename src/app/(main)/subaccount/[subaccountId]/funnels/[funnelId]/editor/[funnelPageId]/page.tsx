@@ -3,8 +3,9 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import EditorProvider from "@/providers/editor/editor-provider";
 
-import { FunnelEditorNavigation } from "./_components/funnel-editor-navigation";
+import FunnelEditor from "./_components/funnel-editor";
 import FunnelEditorSidebar from "./_components/funnel-editor-sidebar";
+import { FunnelEditorNavigation } from "./_components/funnel-editor-navigation";
 
 interface EditorFunnelPageProps {
   params: {
@@ -38,7 +39,9 @@ const EditorFunnelPage = async ({ params }: EditorFunnelPageProps) => {
           funnelPageDetails={funnelPageDetails}
           subaccountId={params.subaccountId}
         />
-        <div className="h-full flex justify-center"></div>
+        <div className="h-full flex justify-center">
+          <FunnelEditor funnelPageId={params.funnelPageId} />
+        </div>
 
         <FunnelEditorSidebar subaccountId={params.subaccountId} />
       </EditorProvider>
