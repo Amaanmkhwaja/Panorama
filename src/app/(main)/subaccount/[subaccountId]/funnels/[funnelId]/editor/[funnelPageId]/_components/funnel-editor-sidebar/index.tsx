@@ -16,6 +16,7 @@ import { Tabs, TabsContent } from "@/components/ui/tabs";
 
 import TabList from "./tabs";
 import { SettingsTab } from "./tabs/settings-tab";
+import { MediaBucketTab } from "./tabs/media-bucket-tab";
 
 interface FunnelEditorSidebarProps {
   subaccountId: string;
@@ -56,7 +57,7 @@ const FunnelEditorSidebar = ({ subaccountId }: FunnelEditorSidebarProps) => {
               <SettingsTab />
             </TabsContent>
             <TabsContent value="Media">
-              {/* <MediaBucketTab subaccountId={subaccountId} /> */}
+              <MediaBucketTab subaccountId={subaccountId} />
             </TabsContent>
             <TabsContent value="Components">
               <SheetHeader className="text-left p-6 ">
