@@ -35,11 +35,22 @@ export const upsertFunnel = async (
   }
 };
 
-export const getFunnels = async (subaccountId: string) => {
-  const funnels = await db.funnel.findMany({
-    where: { subAccountId: subaccountId },
-    include: { FunnelPages: true },
-  });
+export const updateFunnelProducts = async (
+  products: string,
+  funnelId: string
+) => {
+  if (!funnelId || !products) {
+    return { error: "Invalid fields!" };
+  }
 
-  return funnels;
+  try {
+    const updatedFunnel = await db.funnel.update({
+      where: { id: funnelId },
+      data: { liveProducts: products },
+    });
+    return { success: "Updated funnel products!", updatedFunnel };
+  } catch (error) {
+    console.error("updateFunneProducts error:", error);
+    return { error: "Something went wrong." };
+  }
 };

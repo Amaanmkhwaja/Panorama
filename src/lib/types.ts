@@ -17,7 +17,7 @@ import {
   _getTicketsWithAllRelations,
   getTicketsWithTags,
 } from "@/actions/ticket";
-import { getFunnels } from "@/actions/funnel";
+import { getFunnels } from "@/data/funnel";
 
 import Stripe from "stripe";
 

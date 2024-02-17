@@ -79,6 +79,7 @@ export const FunnelForm = ({ defaultData, subAccountId }: FunnelFormProps) => {
         subaccountId: subAccountId,
       });
       toast({
+        variant: "success",
         title: "Success",
         description: "Saved funnel details",
       });

@@ -1,5 +1,5 @@
 import { Plus } from "lucide-react";
-import { getFunnels } from "@/actions/funnel";
+import { getFunnels } from "@/data/funnel";
 
 import { FunnelForm } from "@/components/forms/funnel-form";
 
