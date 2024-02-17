@@ -48,6 +48,21 @@ export const getFunnels = async (subaccountId: string) => {
   return funnels;
 };
 
+export const getFunnelById = async (id: string) => {
+  const funnel = await db.funnel.findUnique({
+    where: { id },
+    include: {
+      FunnelPages: {
+        orderBy: {
+          order: "asc",
+        },
+      },
+    },
+  });
+
+  return funnel;
+};
+
 export const updateFunnelProducts = async (
   products: string,
   funnelId: string

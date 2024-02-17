@@ -212,6 +212,9 @@ export const Container = ({ element }: ContainerProps) => {
       draggable={type !== "__body"}
       onClick={handleOnClickBody}
       onDragStart={(e) => handleDragStart(e, "container")}
+      // TODO Challenge: When you are dragging a component itself, we have to send a new state. How it works right now
+      // is that when we drag an element from the Components tab, we are only sending the componentType in the metadata.
+      // But now we want to send the entir component itself so that we can rebuild or copy the component below that. (see 14:18:03)
     >
       <Badge
         className={clsx(

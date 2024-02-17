@@ -68,12 +68,12 @@ export const FunnelEditorNavigation = ({
         funnelId
       );
 
-      toast("Success", {
+      toast.success("Success", {
         description: "Saved Funnel Page title",
       });
       router.refresh();
     } else {
-      toast("Error!", {
+      toast.error("Error!", {
         description: "You need to have a title!",
       });
       event.target.value = funnelPageDetails.name;
@@ -109,11 +109,11 @@ export const FunnelEditorNavigation = ({
         description: `Updated a funnel page | ${response?.name}`,
         subaccountId: subaccountId,
       });
-      toast("Success", {
+      toast.success("Success", {
         description: "Saved Editor",
       });
     } catch (error) {
-      toast("Error!", {
+      toast.error("Error!", {
         description: "Could not save editor",
       });
     }

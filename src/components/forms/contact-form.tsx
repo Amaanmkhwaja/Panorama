@@ -42,7 +42,10 @@ export const ContactForm = ({ apiCall, subTitle, title }: ContactFormProps) => {
   });
   const isLoading = form.formState.isLoading;
 
-  //TODO CHALLENGE: We want to create tags for each leads that comes from the form
+  // TODO CHALLENGE: We want to create tags for each leads that comes from the form
+  // What these tags are? Be able to attach this "tag" to the contact that way for each form here, you can pass
+  // along with apiCall, you can pass in a tag, and save that tag for each lead. This way you know which specific form
+  // the lead came from. Bc rn the leads are coming in but we dont know where from (see 14:45:00)
 
   return (
     <Card className="max-w-[500px] w-[500px]">

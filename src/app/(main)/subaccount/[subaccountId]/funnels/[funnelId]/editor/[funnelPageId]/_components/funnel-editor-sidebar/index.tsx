@@ -16,6 +16,7 @@ import { Tabs, TabsContent } from "@/components/ui/tabs";
 
 import TabList from "./tabs";
 import { SettingsTab } from "./tabs/settings-tab";
+import ComponentsTab from "./tabs/components-tab";
 import { MediaBucketTab } from "./tabs/media-bucket-tab";
 
 interface FunnelEditorSidebarProps {
@@ -66,7 +67,7 @@ const FunnelEditorSidebar = ({ subaccountId }: FunnelEditorSidebarProps) => {
                   You can drag and drop components on the canvas
                 </SheetDescription>
               </SheetHeader>
-              {/* <ComponentsTab /> */}
+              <ComponentsTab />
             </TabsContent>
           </div>
         </SheetContent>
