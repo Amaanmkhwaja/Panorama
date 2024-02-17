@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import EditorProvider from "@/providers/editor/editor-provider";
 
 import { FunnelEditorNavigation } from "./_components/funnel-editor-navigation";
+import FunnelEditorSidebar from "./_components/funnel-editor-sidebar";
 
 interface EditorFunnelPageProps {
   params: {
@@ -38,6 +39,8 @@ const EditorFunnelPage = async ({ params }: EditorFunnelPageProps) => {
           subaccountId={params.subaccountId}
         />
         <div className="h-full flex justify-center"></div>
+
+        <FunnelEditorSidebar subaccountId={params.subaccountId} />
       </EditorProvider>
     </div>
   );
