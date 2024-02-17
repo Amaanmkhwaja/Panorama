@@ -1,6 +1,7 @@
 import { Plus } from "lucide-react";
 import { getFunnels } from "@/data/funnel";
 
+import { BlurPage } from "@/components/blur-page";
 import { FunnelForm } from "@/components/forms/funnel-form";
 
 import { columns } from "./_components/columns";
@@ -15,7 +16,7 @@ const FunnelsPage = async ({ params }: FunnelsPageProps) => {
   if (!funnels) return null;
 
   return (
-    <>
+    <BlurPage>
       <FunnelsDataTable
         actionButtonText={
           <>
@@ -30,7 +31,7 @@ const FunnelsPage = async ({ params }: FunnelsPageProps) => {
         columns={columns}
         data={funnels}
       />
-    </>
+    </BlurPage>
   );
 };
 

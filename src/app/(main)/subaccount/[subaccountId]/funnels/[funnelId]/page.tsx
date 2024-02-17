@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { getFunnelById } from "@/data/funnel";
 
+import { BlurPage } from "@/components/blur-page";
 import { buttonVariants } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -20,7 +21,7 @@ const FunnelIdPage = async ({ params }: FunnelIdPageProps) => {
     return redirect(`/subaccount/${params.subaccountId}/funnels`);
 
   return (
-    <>
+    <BlurPage>
       <Link
         href={`/subaccount/${params.subaccountId}/funnels`}
         className={buttonVariants({
@@ -51,7 +52,7 @@ const FunnelIdPage = async ({ params }: FunnelIdPageProps) => {
           />
         </TabsContent>
       </Tabs>
-    </>
+    </BlurPage>
   );
 };
 

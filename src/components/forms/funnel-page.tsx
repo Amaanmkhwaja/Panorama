@@ -6,7 +6,7 @@ import { z } from "zod";
 import { v4 as uuid } from "uuid";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CopyPlusIcon, Trash } from "lucide-react";
+import { CopyPlusIcon, Loader2, Trash } from "lucide-react";
 
 import { FunnelPage } from "@prisma/client";
 import { FunnelPageSchema } from "@/schemas";
@@ -34,8 +34,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loading } from "@/components/global/loading";
 import { useToast } from "@/components/ui/use-toast";
+import { useModal } from "@/providers/modal-provider";
 
 interface FunnelPageFormProps {
   defaultData?: FunnelPage;
@@ -50,6 +50,7 @@ export const FunnelPageForm = ({
   order,
   subaccountId,
 }: FunnelPageFormProps) => {
+  const { setClose } = useModal();
   const { toast } = useToast();
   const router = useRouter();
 
@@ -93,9 +94,11 @@ export const FunnelPageForm = ({
       });
 
       toast({
+        variant: "success",
         title: "Success",
-        description: "Saves Funnel Page Details",
+        description: "Saved Funnel Page Details",
       });
+      setClose();
       router.refresh();
     } catch (error) {
       console.log(error);
@@ -160,7 +163,11 @@ export const FunnelPageForm = ({
                 disabled={form.formState.isSubmitting}
                 type="submit"
               >
-                {form.formState.isSubmitting ? <Loading /> : "Save Page"}
+                {form.formState.isSubmitting ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  "Save Page"
+                )}
               </Button>
 
               {defaultData?.id && (
@@ -171,15 +178,34 @@ export const FunnelPageForm = ({
                   type="button"
                   onClick={async () => {
                     const response = await deleteFunnelePage(defaultData.id);
-                    await saveActivityLogsNotification({
-                      agencyId: undefined,
-                      description: `Deleted a funnel page | ${response?.name}`,
-                      subaccountId: subaccountId,
-                    });
-                    router.refresh();
+                    if (response) {
+                      await saveActivityLogsNotification({
+                        agencyId: undefined,
+                        description: `Deleted a funnel page | ${response?.name}`,
+                        subaccountId: subaccountId,
+                      });
+                      toast({
+                        variant: "success",
+                        title: "Success",
+                        description: `Deleted funnel page: ${response?.name}.`,
+                      });
+                      setClose();
+                      router.refresh();
+                    } else {
+                      toast({
+                        variant: "destructive",
+                        title: "Error",
+                        description:
+                          "Something went wrong deleting funnel page.",
+                      });
+                    }
                   }}
                 >
-                  {form.formState.isSubmitting ? <Loading /> : <Trash />}
+                  {form.formState.isSubmitting ? (
+                    <Loader2 className="animate-spin" />
+                  ) : (
+                    <Trash />
+                  )}
                 </Button>
               )}
               {defaultData?.id && (
@@ -194,7 +220,7 @@ export const FunnelPageForm = ({
                       (funnel) => funnel.id === funnelId
                     )?.FunnelPages.length;
 
-                    await upsertFunnelPage(
+                    const upsertResponse = await upsertFunnelPage(
                       subaccountId,
                       {
                         ...defaultData,
@@ -207,14 +233,28 @@ export const FunnelPageForm = ({
                       },
                       funnelId
                     );
-                    toast({
-                      title: "Success",
-                      description: "Saves Funnel Page Details",
-                    });
-                    router.refresh();
+                    if (upsertResponse) {
+                      toast({
+                        variant: "success",
+                        title: "Success",
+                        description: "Saved Funnel Page Details",
+                      });
+                      setClose();
+                      router.refresh();
+                    } else {
+                      toast({
+                        variant: "destructive",
+                        title: "Error",
+                        description: "Something went wrong.",
+                      });
+                    }
                   }}
                 >
-                  {form.formState.isSubmitting ? <Loading /> : <CopyPlusIcon />}
+                  {form.formState.isSubmitting ? (
+                    <Loader2 className="animate-spin" />
+                  ) : (
+                    <CopyPlusIcon />
+                  )}
                 </Button>
               )}
             </div>

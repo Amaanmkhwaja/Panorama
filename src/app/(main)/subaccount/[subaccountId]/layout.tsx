@@ -7,7 +7,6 @@ import { verifyAndAcceptInvitation } from "@/data/agency";
 import { getNotificationAndUser } from "@/data/notification";
 
 import { InfoBar } from "@/components/info-bar";
-import { BlurPage } from "@/components/blur-page";
 import { Sidebar } from "@/components/sidebar/sidebar";
 import { Unauthorized } from "@/components/unauthorized";
 
@@ -64,9 +63,7 @@ const SubaccountLayout = async ({
           role={user.role}
           subAccountId={params.subaccountId as string}
         />
-        <div className="relative">
-          <BlurPage>{children}</BlurPage>
-        </div>
+        <div className="relative">{children}</div>
       </div>
     </div>
   );

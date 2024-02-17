@@ -1,7 +1,9 @@
-import { SubAccountDetails } from "@/components/forms/subaccount-details";
-import { UserDetails } from "@/components/forms/user-details";
-import { currentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { currentUser } from "@/lib/auth";
+
+import { BlurPage } from "@/components/blur-page";
+import { UserDetails } from "@/components/forms/user-details";
+import { SubAccountDetails } from "@/components/forms/subaccount-details";
 
 interface SubaccountSettingsPageProps {
   params: { subaccountId: string };
@@ -33,20 +35,22 @@ const SubaccountSettingsPage = async ({
   const subAccounts = agencyDetails.SubAccount;
 
   return (
-    <div className="flex flex-col lg:!flex-row gap-4">
-      <SubAccountDetails
-        agencyDetails={agencyDetails}
-        details={subAccount}
-        userId={userDetails.id}
-        userName={userDetails.name}
-      />
-      <UserDetails
-        type="subaccount"
-        id={params.subaccountId}
-        subAccounts={subAccounts}
-        userData={userDetails}
-      />
-    </div>
+    <BlurPage>
+      <div className="flex flex-col lg:!flex-row gap-4">
+        <SubAccountDetails
+          agencyDetails={agencyDetails}
+          details={subAccount}
+          userId={userDetails.id}
+          userName={userDetails.name}
+        />
+        <UserDetails
+          type="subaccount"
+          id={params.subaccountId}
+          subAccounts={subAccounts}
+          userData={userDetails}
+        />
+      </div>
+    </BlurPage>
   );
 };
 

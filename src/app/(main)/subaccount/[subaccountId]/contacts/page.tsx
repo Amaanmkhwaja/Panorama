@@ -3,8 +3,6 @@ import format from "date-fns/format";
 import { db } from "@/lib/db";
 import { Contact, SubAccount, Ticket } from "@prisma/client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -13,6 +11,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { BlurPage } from "@/components/blur-page";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 import { CreateContactButton } from "./_components/create-contact-button";
 
 interface SubaccountContactsPageProps {
@@ -65,7 +67,7 @@ const SubaccountContactsPage = async ({
   };
 
   return (
-    <>
+    <BlurPage>
       <div className="w-full flex items-center justify-between">
         <h1 className="text-4xl p-4">Contacts</h1>
         <CreateContactButton subaccountId={params.subaccountId} />
@@ -107,7 +109,7 @@ const SubaccountContactsPage = async ({
           ))}
         </TableBody>
       </Table>
-    </>
+    </BlurPage>
   );
 };
 
