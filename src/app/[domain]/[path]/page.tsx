@@ -1,3 +1,3 @@
-export default function Page() {
-  return <div>Page</div>;
+export default function DomainPathPage() {
+  return <div>DomainPathPage</div>;
 }

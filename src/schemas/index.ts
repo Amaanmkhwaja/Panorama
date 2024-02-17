@@ -1,5 +1,15 @@
 import * as z from "zod";
 
+export const FunnelPageSchema = z.object({
+  name: z.string().min(1),
+  pathName: z.string().optional(),
+});
+
+export const ContactFormSchema = z.object({
+  name: z.string().min(1, "Required"),
+  email: z.string().email(),
+});
+
 const currencyNumberRegex = /^\d+(\.\d{1,2})?$/;
 
 export const TicketFormSchema = z.object({
@@ -14,7 +24,7 @@ export const LaneFormSchema = z.object({
   name: z.string().min(1),
 });
 
-export const CreateFunnelSchema = z.object({
+export const FunnelSchema = z.object({
   name: z.string().min(1),
   description: z.string(),
   subDomainName: z.string().optional(),

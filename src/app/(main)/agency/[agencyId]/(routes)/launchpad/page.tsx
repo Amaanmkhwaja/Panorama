@@ -2,7 +2,12 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 
+import { db } from "@/lib/db";
+import { stripe } from "@/lib/stripe";
 import { CheckCircleIcon } from "lucide-react";
+import { getStripeOAuthLink } from "@/lib/utils";
+import { getAgencyDetailsById } from "@/data/agency";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +17,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getAgencyDetailsById } from "@/data/agency";
 
 interface LaunchPadPageProps {
   params: {
@@ -37,6 +41,35 @@ const LaunchPadPage = async ({ params, searchParams }: LaunchPadPageProps) => {
     agencyDetails.name &&
     agencyDetails.state &&
     agencyDetails.zipCode;
+
+  const stripeOAuthLink = getStripeOAuthLink(
+    "agency",
+    `launchpad___${agencyDetails.id}`
+  );
+
+  let connectedStripeAccount = false;
+
+  if (searchParams.code) {
+    if (!agencyDetails.connectAccountId) {
+      try {
+        const response = await stripe.oauth.token({
+          grant_type: "authorization_code",
+          code: searchParams.code,
+        });
+        console.log("stripe connected response: ", response);
+        await db.agency.update({
+          where: { id: params.agencyId },
+          data: { connectAccountId: response.stripe_user_id },
+        });
+        connectedStripeAccount = true;
+        // toast.success("Connected your stripe account!", { duration: 5000 });
+        console.log("Connected your stripe account!!");
+      } catch (error) {
+        // toast.error("Could not connect stripe account.", { duration: 5000 });
+        console.log("🔴 Could not connect stripe account");
+      }
+    }
+  }
 
   return (
     <div className="flex flex-col justify-center items-center">
@@ -76,6 +109,19 @@ const LaunchPadPage = async ({ params, searchParams }: LaunchPadPageProps) => {
                   dashboard.
                 </p>
               </div>
+              {agencyDetails.connectAccountId || connectedStripeAccount ? (
+                <CheckCircleIcon
+                  size={50}
+                  className=" text-primary p-2 flex-shrink-0"
+                />
+              ) : (
+                <Link
+                  className="bg-primary py-2 px-4 rounded-md text-white"
+                  href={stripeOAuthLink}
+                >
+                  Start
+                </Link>
+              )}
             </div>
             <div className="flex justify-between items-center w-full border p-4 rounded-lg gap-2">
               <div className="flex md:items-center gap-4 flex-col md:!flex-row">

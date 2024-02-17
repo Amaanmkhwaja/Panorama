@@ -48,3 +48,20 @@ export const deleteMedia = async (mediaId: string) => {
     return { error: "Something went wrong." };
   }
 };
+
+export const getMediaBySubaccountId = async (subAccountId: string) => {
+  if (!subAccountId) {
+    return { error: "Missing subaccount ID." };
+  }
+
+  try {
+    const mediaFiles = await db.subAccount.findUnique({
+      where: { id: subAccountId },
+      include: { Media: true },
+    });
+
+    return { success: "ok", mediaFiles };
+  } catch (error) {
+    return { error: "Something went wrong" };
+  }
+};

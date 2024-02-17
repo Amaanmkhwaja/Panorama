@@ -86,7 +86,6 @@ export const AgencyDetails = ({ data }: AgencyDetailsProps) => {
     }
   }, [data]);
 
-  // values: z.infer<typeof AgencyDetailsSchema>
   const handleSubmit = async (values: z.infer<typeof AgencyDetailsSchema>) => {
     try {
       let newUserData;
@@ -113,38 +112,50 @@ export const AgencyDetails = ({ data }: AgencyDetailsProps) => {
             state: values.zipCode,
           },
         };
+
+        const customerResponse = await fetch("/api/stripe/create-customer", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(bodyData),
+        });
+        const customerData: { customerId: string } =
+          await customerResponse.json();
+        custId = customerData.customerId;
       }
 
-      // WIP: custId
       newUserData = await initUser({ role: "AGENCY_OWNER" });
-      if (!data?.customerId) {
-        const response = await upsertAgency({
-          id: data?.id ? data.id : v4(),
-          customerId: data?.customerId || custId || "",
-          address: values.address,
-          agencyLogo: values.agencyLogo,
-          city: values.city,
-          companyPhone: values.companyPhone,
-          country: values.country,
-          name: values.name,
-          state: values.state,
-          whiteLabel: values.whiteLabel,
-          zipCode: values.zipCode,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          companyEmail: values.companyEmail,
-          connectAccountId: "",
-          goal: 5,
-        });
-        if (response?.error) {
-          return toast.error(response.error);
-        }
+      if (!data?.customerId && !custId) return;
 
-        toast.success(response?.success);
-        if (data?.id) return router.refresh();
-        if (response?.success) {
-          return router.refresh();
-        }
+      const response = await upsertAgency({
+        id: data?.id ? data.id : v4(),
+        customerId: data?.customerId || custId || "",
+        address: values.address,
+        agencyLogo: values.agencyLogo,
+        city: values.city,
+        companyPhone: values.companyPhone,
+        country: values.country,
+        name: values.name,
+        state: values.state,
+        whiteLabel: values.whiteLabel,
+        zipCode: values.zipCode,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        companyEmail: values.companyEmail,
+        connectAccountId: "",
+        goal: 5,
+      });
+      if (response.error) {
+        toast.error(response.error);
+      }
+      if (response.success) {
+        toast.success(response.success);
+      }
+
+      if (data?.id) return router.refresh();
+      if (response.success) {
+        return router.refresh();
       }
     } catch (error) {
       console.log(error);
@@ -177,7 +188,7 @@ export const AgencyDetails = ({ data }: AgencyDetailsProps) => {
         <CardHeader>
           <CardTitle>Agency Information</CardTitle>
           <CardDescription>
-            Let's create an agency for your business. You can edit agency
+            Let&apos;s create an agency for your business. You can edit agency
             settings later from the agency settings tab.
           </CardDescription>
         </CardHeader>
