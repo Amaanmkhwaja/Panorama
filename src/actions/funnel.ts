@@ -1,9 +1,13 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+
 import * as z from "zod";
-import { v4 as uuid } from "uuid";
 import { db } from "@/lib/db";
+import { v4 as uuid } from "uuid";
+
 import { FunnelSchema } from "@/schemas";
+import { UpsertFunnelPage } from "@/lib/types";
 
 export const upsertFunnel = async (
   subaccountId: string,
@@ -35,6 +39,15 @@ export const upsertFunnel = async (
   }
 };
 
+export const getFunnels = async (subaccountId: string) => {
+  const funnels = await db.funnel.findMany({
+    where: { subAccountId: subaccountId },
+    include: { FunnelPages: true },
+  });
+
+  return funnels;
+};
+
 export const updateFunnelProducts = async (
   products: string,
   funnelId: string
@@ -53,4 +66,40 @@ export const updateFunnelProducts = async (
     console.error("updateFunneProducts error:", error);
     return { error: "Something went wrong." };
   }
+};
+
+export const upsertFunnelPage = async (
+  subaccountId: string,
+  funnelPage: UpsertFunnelPage,
+  funnelId: string
+) => {
+  if (!subaccountId || !funnelId) return;
+  const response = await db.funnelPage.upsert({
+    where: { id: funnelPage.id || "" },
+    update: { ...funnelPage },
+    create: {
+      ...funnelPage,
+      content: funnelPage.content
+        ? funnelPage.content
+        : JSON.stringify([
+            {
+              content: [],
+              id: "__body",
+              name: "Body",
+              styles: { backgroundColor: "white" },
+              type: "__body",
+            },
+          ]),
+      funnelId,
+    },
+  });
+
+  revalidatePath(`/subaccount/${subaccountId}/funnels/${funnelId}`, "page");
+  return response;
+};
+
+export const deleteFunnelePage = async (funnelPageId: string) => {
+  const response = await db.funnelPage.delete({ where: { id: funnelPageId } });
+
+  return response;
 };

@@ -1,5 +1,10 @@
 import * as z from "zod";
 
+export const FunnelPageSchema = z.object({
+  name: z.string().min(1),
+  pathName: z.string().optional(),
+});
+
 export const ContactFormSchema = z.object({
   name: z.string().min(1, "Required"),
   email: z.string().email(),

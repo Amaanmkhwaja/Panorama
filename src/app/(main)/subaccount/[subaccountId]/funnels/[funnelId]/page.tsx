@@ -7,6 +7,7 @@ import { getFunnelById } from "@/data/funnel";
 import { buttonVariants } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+import { FunnelSteps } from "./_components/funnel-steps";
 import { FunnelSettings } from "./_components/funnel-settings";
 
 interface FunnelIdPageProps {
@@ -36,12 +37,12 @@ const FunnelIdPage = async ({ params }: FunnelIdPageProps) => {
           <TabsTrigger value="settings">Settings</TabsTrigger>
         </TabsList>
         <TabsContent value="steps">
-          {/* <FunnelSteps
+          <FunnelSteps
             funnel={funnelPages}
             subaccountId={params.subaccountId}
             pages={funnelPages.FunnelPages}
             funnelId={params.funnelId}
-          /> */}
+          />
         </TabsContent>
         <TabsContent value="settings">
           <FunnelSettings

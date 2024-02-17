@@ -25,6 +25,8 @@ export const FunnelSettings: React.FC<FunnelSettingsProps> = async ({
   defaultData,
 }) => {
   // TODO CHALLENGE: go connect your stripe to sell products
+  // When we try to access the products, if the account is not cancelled, we should not show the funnel page.
+  // Use some logic to prompt the user to go connect your stripe to sell products.
 
   const subaccountDetails = await db.subAccount.findUnique({
     where: {
