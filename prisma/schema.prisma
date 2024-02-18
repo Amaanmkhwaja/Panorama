@@ -375,6 +375,7 @@ model AgencySidebarOption {
   Agency    Agency?  @relation(fields: [agencyId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  order     Int      @default(0)
 
   @@index([agencyId])
 }
@@ -388,6 +389,7 @@ model SubAccountSidebarOption {
   updatedAt    DateTime    @updatedAt
   SubAccount   SubAccount? @relation(fields: [subAccountId], references: [id], onDelete: Cascade)
   subAccountId String?
+  order         Int        @default(0)
 
   @@index([subAccountId])
 }

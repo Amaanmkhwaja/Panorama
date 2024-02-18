@@ -33,9 +33,19 @@ export const getAuthUserDetails = async () => {
       include: {
         Agency: {
           include: {
-            SidebarOption: true,
+            SidebarOption: {
+              orderBy: {
+                order: "asc",
+              },
+            },
             SubAccount: {
-              include: { SidebarOption: true },
+              include: {
+                SidebarOption: {
+                  orderBy: {
+                    order: "asc",
+                  },
+                },
+              },
             },
           },
         },
