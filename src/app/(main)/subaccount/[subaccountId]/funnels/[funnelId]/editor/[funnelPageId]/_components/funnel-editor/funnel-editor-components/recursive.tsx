@@ -2,6 +2,7 @@ import React from "react";
 
 import { EditorElement } from "@/providers/editor/editor-provider";
 
+import { Checkout } from "./checkout";
 import { TextComponent } from "./text";
 import { Container } from "./container";
 import { VideoComponent } from "./video";
@@ -22,8 +23,8 @@ export const Recursive = ({ element }: RecursiveProps) => {
       return <VideoComponent element={element} />;
     case "contactForm":
       return <ContactFormComponent element={element} />;
-    // case 'paymentForm':
-    //   return <Checkout element={element} />
+    case "paymentForm":
+      return <Checkout element={element} />;
     case "2Col":
       return <Container element={element} />;
     case "__body":

@@ -27,6 +27,7 @@ export default auth((req) => {
 
   // checking if it is API auth route
   if (isApiAuthRoute || isPublicRoute) {
+    // console.log(nextUrl.pathname, "isApiAuthRoute or isPublicRoute");
     return NextResponse.next();
   }
 
@@ -86,7 +87,8 @@ export default auth((req) => {
     nextUrl.pathname.startsWith("/agency") ||
     nextUrl.pathname.startsWith("/subaccount")
   ) {
-    console.log("reached /agency or /subaccount");
+    return NextResponse.next();
+    // console.log("reached /agency or /subaccount");
     // return NextResponse.rewrite(new URL(`${pathWithSearchParams}`, nextUrl));
   }
 
