@@ -1,3 +1,12 @@
+import Image from "next/image";
+import Link from "next/link";
+
+import { Check } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+// import { stripe } from "@/lib/stripe";
+import { pricingCards } from "@/lib/constants";
+
 import {
   Card,
   CardContent,
@@ -6,13 +15,13 @@ import {
   CardTitle,
   CardFooter,
 } from "@/components/ui/card";
-import { pricingCards } from "@/lib/constants";
-import { cn } from "@/lib/utils";
-import { Check } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
 
-export default function Home() {
+export default async function Home() {
+  // const prices = await stripe.prices.list({
+  //   product: process.env.NEXT_PANORAMA_PRODUCT_ID,
+  //   active: true,
+  // });
+
   return (
     <>
       <section className="min-h-screen w-full md:pt-44 mt-[-70px] relative flex items-center justify-center flex-col">
