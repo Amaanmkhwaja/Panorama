@@ -17,11 +17,33 @@ export default auth((req) => {
   // console.log("=======================================================");
   // console.log("middleware: '" + nextUrl.pathname + "'");
 
+  const searchParams = nextUrl.searchParams.toString();
+  let hostname = req.headers;
+  const pathWithSearchParams = `${nextUrl.pathname}${
+    searchParams.length > 0 ? `${searchParams}` : ""
+  }`;
+  // console.log("searchParams: " + searchParams);
+
+  // if subdomain exists
+  const customSubdomain = hostname
+    .get("host")
+    ?.split(`${process.env.NEXT_PUBLIC_DOMAIN}`)
+    .filter(Boolean)[0];
+
+  // console.log("customSubDomain: ", customSubdomain);
+  if (customSubdomain) {
+    // console.log("customSubdomain: ", customSubdomain);
+    return NextResponse.rewrite(
+      new URL(`/${customSubdomain}${pathWithSearchParams}`, nextUrl)
+    );
+  }
+
   if (
     nextUrl.pathname === "/" ||
     (nextUrl.pathname === "/site" &&
       nextUrl.host === process.env.NEXT_PUBLIC_DOMAIN)
   ) {
+    // console.log("requesting / or /site");
     return NextResponse.rewrite(new URL("/site", nextUrl));
   }
 
@@ -58,25 +80,6 @@ export default auth((req) => {
   }
 
   // at this point in the middelware, user is logged in and accessing a route that they are allowed to visit/or user is accessing the landing page
-  const searchParams = nextUrl.searchParams.toString();
-  let hostname = req.headers;
-  const pathWithSearchParams = `${nextUrl.pathname}${
-    searchParams.length > 0 ? `${searchParams}` : ""
-  }`;
-  // console.log("searchParams: " + searchParams);
-
-  // if subdomain exists
-  const customSubdomain = hostname
-    .get("host")
-    ?.split(`${process.env.NEXT_PUBLIC_DOMAIN}`)
-    .filter(Boolean)[0];
-
-  if (customSubdomain) {
-    // console.log("customSubdomain: ", customSubdomain);
-    return NextResponse.rewrite(
-      new URL(`/${customSubdomain}${pathWithSearchParams}`, nextUrl)
-    );
-  }
 
   // if the subdomain doesnt exist then we are going to the next stage
   if (nextUrl.pathname === "/sign-in" || nextUrl.pathname === "/register") {
