@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import { FunnelPage } from "@prisma/client";
 import { upsertFunnelPage } from "@/actions/funnel";
 import { saveActivityLogsNotification } from "@/actions/notification";
+import { useHistory, useCanUndo, useCanRedo } from "@/liveblocks.config";
 import { DeviceTypes, useEditor } from "@/providers/editor/editor-provider";
 
 import {
@@ -29,8 +30,10 @@ import {
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
+// import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+import { Participants } from "./participants";
 
 interface FunnelEditorNavigationProps {
   funnelId: string;
@@ -45,6 +48,9 @@ export const FunnelEditorNavigation = ({
 }: FunnelEditorNavigationProps) => {
   const router = useRouter();
   const { state, dispatch } = useEditor();
+  const history = useHistory();
+  const canUndo = useCanUndo();
+  const canRedo = useCanRedo();
 
   useEffect(() => {
     dispatch({
@@ -198,6 +204,7 @@ export const FunnelEditorNavigation = ({
           </Tabs>
         </aside>
         <aside className="flex items-center gap-2">
+          <Participants />
           <Button
             variant={"ghost"}
             size={"icon"}
@@ -207,8 +214,10 @@ export const FunnelEditorNavigation = ({
             <EyeIcon />
           </Button>
           <Button
-            disabled={!(state.history.currentIndex > 0)}
-            onClick={handleUndo}
+            // disabled={!(state.history.currentIndex > 0)}
+            disabled={!canUndo}
+            onClick={history.undo}
+            // onClick={handleUndo}
             variant={"ghost"}
             size={"icon"}
             className="hover:bg-slate-800"
@@ -216,27 +225,29 @@ export const FunnelEditorNavigation = ({
             <Undo2 />
           </Button>
           <Button
-            disabled={
-              !(state.history.currentIndex < state.history.history.length - 1)
-            }
-            onClick={handleRedo}
+            // disabled={
+            //   !(state.history.currentIndex < state.history.history.length - 1)
+            // }
+            disabled={!canRedo}
+            onClick={history.redo}
+            // onClick={handleRedo}
             variant={"ghost"}
             size={"icon"}
             className="hover:bg-slate-800 mr-4"
           >
             <Redo2 />
           </Button>
-          <div className="flex flex-col item-center mr-4">
+          {/* <div className="flex flex-col item-center mr-4">
             <div className="flex flex-row items-center gap-4">
               Draft
-              {/* TODO: There is a value in the Prisma schema to be able to change this */}
+              // TODO: There is a value in the Prisma schema to be able to change this
               <Switch disabled defaultChecked={true} />
               Publish
             </div>
             <span className="text-muted-foreground text-sm">
               Last updated {funnelPageDetails.updatedAt.toLocaleDateString()}
             </span>
-          </div>
+          </div> */}
           <Button onClick={handleOnSave}>Save</Button>
         </aside>
       </nav>

@@ -5,10 +5,8 @@ import { useEditor } from "@/providers/editor/editor-provider";
 
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
@@ -25,7 +23,7 @@ interface FunnelEditorSidebarProps {
 }
 
 const FunnelEditorSidebar = ({ subaccountId }: FunnelEditorSidebarProps) => {
-  const { state, dispatch } = useEditor();
+  const { state } = useEditor();
   return (
     <Sheet open={true} modal={false}>
       <Tabs className="w-full " defaultValue="Settings">
@@ -33,7 +31,7 @@ const FunnelEditorSidebar = ({ subaccountId }: FunnelEditorSidebarProps) => {
           showX={false}
           side="right"
           className={clsx(
-            "mt-[97px] w-16 z-[80] shadow-none  p-0 focus:border-none transition-all overflow-hidden",
+            "mt-[97px] w-16 z-[80] shadow-none p-0 focus:border-none transition-all overflow-hidden",
             { hidden: state.editor.previewMode }
           )}
         >
@@ -43,7 +41,7 @@ const FunnelEditorSidebar = ({ subaccountId }: FunnelEditorSidebarProps) => {
           showX={false}
           side="right"
           className={clsx(
-            "mt-[97px] w-80 z-[40] shadow-none p-0 mr-16 bg-background h-full transition-all overflow-hidden ",
+            "mt-[97px] w-80 z-[40] shadow-none p-0 mr-16 bg-background h-full transition-all overflow-hidden",
             { hidden: state.editor.previewMode }
           )}
         >
@@ -62,6 +60,9 @@ const FunnelEditorSidebar = ({ subaccountId }: FunnelEditorSidebarProps) => {
               <MediaBucketTab subaccountId={subaccountId} />
             </TabsContent>
             <TabsContent value="Layers">
+              <SheetHeader className="text-left p-6 ">
+                <SheetTitle>Layers</SheetTitle>
+              </SheetHeader>
               <LayersTab />
             </TabsContent>
             <TabsContent value="Components">
