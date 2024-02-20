@@ -11,7 +11,7 @@ const font = DM_Sans({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Panorama",
   description:
-    "Panorama the best all in one CRM to run your business and grow!",
+    "Panorama is the best all in one CRM to run your business and grow!",
 };
 
 export default async function RootLayout({
