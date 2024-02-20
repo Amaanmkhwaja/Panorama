@@ -115,3 +115,8 @@ export type FunnelsForSubAccount = Prisma.PromiseReturnType<
 >[0];
 
 export type UpsertFunnelPage = Prisma.FunnelPageCreateWithoutFunnelInput;
+
+export type Camera = {
+  x: number;
+  y: number;
+};
