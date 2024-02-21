@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 
 import {
   DragDropContext,
@@ -9,31 +8,22 @@ import {
   DropResult,
   Droppable,
 } from "react-beautiful-dnd";
-import { Check, ExternalLink, LucideEdit } from "lucide-react";
+import { toast } from "sonner";
+import { Check } from "lucide-react";
+import { useMutation, useQuery } from "convex/react";
 
-import { Funnel, FunnelPage } from "@prisma/client";
-import { upsertFunnelPage } from "@/actions/funnel";
-import { FunnelsForSubAccount } from "@/lib/types";
+import { Funnel } from "@prisma/client";
+import { api } from "@/convex/_generated/api";
+import { Doc } from "@/convex/_generated/dataModel";
 import { useModal } from "@/providers/modal-provider";
 
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { AlertDialog } from "@/components/ui/alert-dialog";
 import { CustomModal } from "@/components/global/custom-modal";
 import { FunnelPageForm } from "@/components/forms/funnel-page";
-import { FunnelPagePlaceholder } from "@/components/icons/funnel-page-placeholder";
 
 import { FunnelStepCard } from "./funnel-step-card";
-import { Doc } from "@/convex/_generated/dataModel";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
 import { FunnelPageSettings } from "./funnel-page-settings";
 
 interface FunnelStepsProps {
@@ -50,69 +40,56 @@ export const FunnelSteps = ({
   subaccountId,
 }: FunnelStepsProps) => {
   const { setOpen } = useModal();
-  // const [pagesState, setPagesState] = useState(pages);
+
   const funnelPages = useQuery(api.funnelPage.getFunnelPages, { funnelId });
+  const updateFunnelPageOrder = useMutation(api.funnelPage.updateOrder);
+
+  const [pagesState, setPagesState] = useState<Doc<"funnelPage">[]>([]);
   const [clickedPage, setClickedPage] = useState<Doc<"funnelPage"> | undefined>(
     undefined
   );
   useEffect(() => {
     if (funnelPages) {
       setClickedPage(funnelPages[0]);
+      setPagesState(funnelPages);
     }
   }, [funnelPages]);
-  // const onDragStart = (event: DragStart) => {
-  //   //current chosen page
-  //   const { draggableId } = event;
-  //   const value = pagesState.find((page) => page.id === draggableId);
-  // };
+  const onDragStart = (event: DragStart) => {
+    //current chosen page
+    const { draggableId } = event;
+    const value = pages.find((page) => page._id === draggableId);
+  };
 
-  // const onDragEnd = (dropResult: DropResult) => {
-  //   const { destination, source } = dropResult;
+  const onDragEnd = (dropResult: DropResult) => {
+    const { destination, source } = dropResult;
 
-  //   //no destination or same position
-  //   if (
-  //     !destination ||
-  //     (destination.droppableId === source.droppableId &&
-  //       destination.index === source.index)
-  //   ) {
-  //     return;
-  //   }
-  //   //change state
-  //   const newPageOrder = [...pagesState]
-  //     .toSpliced(source.index, 1)
-  //     .toSpliced(destination.index, 0, pagesState[source.index])
-  //     .map((page, idx) => {
-  //       return { ...page, order: idx };
-  //     });
+    //no destination or same position
+    if (
+      !destination ||
+      (destination.droppableId === source.droppableId &&
+        destination.index === source.index)
+    ) {
+      return;
+    }
+    //change state
+    const newPageOrder = [...pagesState]
+      .toSpliced(source.index, 1)
+      .toSpliced(destination.index, 0, pagesState[source.index])
+      .map((page, idx) => {
+        return { ...page, order: idx };
+      });
 
-  //   setPagesState(newPageOrder);
-  //   newPageOrder.forEach(async (page, index) => {
-  //     try {
-  //       await upsertFunnelPage(
-  //         subaccountId,
-  //         {
-  //           id: page.id,
-  //           order: index,
-  //           name: page.name,
-  //         },
-  //         funnelId
-  //       );
-  //     } catch (error) {
-  //       console.log(error);
-  //       toast({
-  //         variant: "destructive",
-  //         title: "Failed",
-  //         description: "Could not save page order",
-  //       });
-  //       return;
-  //     }
-  //   });
-
-  //   toast({
-  //     title: "Success",
-  //     description: "Saved page order",
-  //   });
-  // };
+    setPagesState(newPageOrder);
+    newPageOrder.forEach(async (page, index) => {
+      updateFunnelPageOrder({ id: page._id, order: index })
+        .then(() => {
+          // toast.success("Saved page order");
+        })
+        .catch((error) => {
+          toast.error(error || "Couldn not save page order!");
+        });
+    });
+  };
 
   return (
     <AlertDialog>
@@ -123,8 +100,8 @@ export const FunnelSteps = ({
               <Check />
               Funnel Steps
             </div>
-            {funnelPages && funnelPages.length ? (
-              <DragDropContext onDragEnd={() => {}} onDragStart={() => {}}>
+            {pagesState.length ? (
+              <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
                 <Droppable
                   droppableId="funnels"
                   direction="vertical"
@@ -132,7 +109,7 @@ export const FunnelSteps = ({
                 >
                   {(provided) => (
                     <div {...provided.droppableProps} ref={provided.innerRef}>
-                      {funnelPages.map((page, idx) => (
+                      {pagesState.map((page, idx) => (
                         <div
                           className="relative"
                           key={page._id}

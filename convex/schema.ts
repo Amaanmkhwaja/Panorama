@@ -12,5 +12,7 @@ export default defineSchema({
     order: v.number(),
     previewImage: v.optional(v.string()),
     funnelId: v.string(),
-  }).index("by_funnel_id", ["funnelId"]),
+  })
+    .index("by_funnel_id", ["funnelId"])
+    .index("by_sorted_order", ["order"]),
 });

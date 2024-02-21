@@ -29,3 +29,17 @@ export function pointerEventToCanvasPoint(
     y: Math.round(e.clientY) - camera.y,
   };
 }
+
+export function toSlug(text: string): string {
+  // 1. Convert to lowercase
+  return (
+    text
+      .toLowerCase()
+      // 2. Remove non-alphanumeric characters except spaces, hyphens, and underscores
+      .replace(/[^\w\s-]/g, "")
+      // 3. Replace spaces with hyphens
+      .replace(/\s+/g, "-")
+      // 4. Remove leading or trailing hyphens
+      .replace(/^-+|-+$/g, "")
+  );
+}

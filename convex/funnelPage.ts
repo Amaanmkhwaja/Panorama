@@ -62,6 +62,27 @@ export const updateSettings = mutation({
   },
 });
 
+export const updateOrder = mutation({
+  args: {
+    id: v.id("funnelPage"),
+    order: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const existingFunnelPage = await ctx.db.get(args.id);
+    if (!existingFunnelPage) {
+      throw new Error("Funnel page does not exist!");
+    }
+
+    const date = new Date();
+    const dateString = date.toLocaleString();
+
+    await ctx.db.patch(existingFunnelPage._id, {
+      order: args.order,
+      updatedAt: dateString,
+    });
+  },
+});
+
 export const update = mutation({
   args: {
     funnelPage: v.object({
@@ -107,7 +128,9 @@ export const getFunnelPages = query({
   handler: async (ctx, args) => {
     const funnelPage = await ctx.db
       .query("funnelPage")
-      .withIndex("by_funnel_id", (q) => q.eq("funnelId", args.funnelId))
+      .withIndex("by_sorted_order")
+      .order("asc")
+      .filter((q) => q.eq(q.field("funnelId"), args.funnelId))
       .collect();
     return funnelPage;
   },
