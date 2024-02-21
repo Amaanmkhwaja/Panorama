@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { v4 as uuid } from "uuid";
 import { useForm } from "react-hook-form";
+import { useMutation } from "convex/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CopyPlusIcon, Loader2, Trash } from "lucide-react";
 
@@ -35,7 +36,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { toast as sonnerToast } from "sonner";
 import { useModal } from "@/providers/modal-provider";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 
 interface FunnelPageFormProps {
   defaultData?: FunnelPage;
@@ -53,6 +57,9 @@ export const FunnelPageForm = ({
   const { setClose } = useModal();
   const { toast } = useToast();
   const router = useRouter();
+
+  const createFunnelPage = useMutation(api.funnelPage.create);
+  const updateFunnelPage = useMutation(api.funnelPage.update);
 
   const form = useForm<z.infer<typeof FunnelPageSchema>>({
     resolver: zodResolver(FunnelPageSchema),
@@ -75,39 +82,88 @@ export const FunnelPageForm = ({
         message:
           "Pages other than the first page in the funnel require a path name example 'secondstep'.",
       });
-    try {
-      const response = await upsertFunnelPage(
-        subaccountId,
-        {
-          ...values,
-          id: defaultData?.id || uuid(),
-          order: defaultData?.order || order,
-          pathName: values.pathName || "",
+    if (defaultData) {
+      const createdAtString = defaultData.createdAt.toLocaleString();
+      const updatedAtString = defaultData.updatedAt.toLocaleString();
+      const updatePromise = updateFunnelPage({
+        funnelPage: {
+          ...defaultData,
+          id: defaultData.id as Id<"funnelPage">,
+          createdAt: createdAtString,
+          updatedAt: updatedAtString,
+          previewImage: defaultData.previewImage || undefined,
+          content: defaultData.previewImage || undefined,
         },
-        funnelId
-      );
-
-      await saveActivityLogsNotification({
-        agencyId: undefined,
-        description: `Updated a funnel page | ${response?.name}`,
-        subaccountId: subaccountId,
+      }).then(async () => {
+        await saveActivityLogsNotification({
+          agencyId: undefined,
+          description: `Updated a funnel page | ${values.name}`,
+          subaccountId: subaccountId,
+        });
+        setClose();
+        router.refresh();
       });
 
-      toast({
-        variant: "success",
-        title: "Success",
-        description: "Saved Funnel Page Details",
+      sonnerToast.promise(updatePromise, {
+        loading: "Saving...",
+        success: "Saved Funnel Page Details",
+        error: "Error saving funnel page details.",
       });
-      setClose();
-      router.refresh();
-    } catch (error) {
-      console.log(error);
-      toast({
-        variant: "destructive",
-        title: "Oppse!",
-        description: "Could Save Funnel Page Details",
+    } else {
+      const createPromise = createFunnelPage({
+        name: values.name,
+        pathName: values.pathName || "",
+        funnelId,
+        order,
+      }).then(async () => {
+        await saveActivityLogsNotification({
+          agencyId: undefined,
+          description: `Updated a funnel page | ${values.name}`,
+          subaccountId: subaccountId,
+        });
+        setClose();
+        router.refresh();
+      });
+
+      sonnerToast.promise(createPromise, {
+        loading: "Saving...",
+        success: "Created new Funnel Page",
+        error: "Error creating funnel page!",
       });
     }
+    // try {
+    //   const response = await upsertFunnelPage(
+    //     subaccountId,
+    //     {
+    //       ...values,
+    //       id: defaultData?.id || uuid(),
+    //       order: defaultData?.order || order,
+    //       pathName: values.pathName || "",
+    //     },
+    //     funnelId
+    //   );
+
+    //   await saveActivityLogsNotification({
+    //     agencyId: undefined,
+    //     description: `Updated a funnel page | ${response?.name}`,
+    //     subaccountId: subaccountId,
+    //   });
+
+    //   toast({
+    //     variant: "success",
+    //     title: "Success",
+    //     description: "Saved Funnel Page Details",
+    //   });
+    //   setClose();
+    //   router.refresh();
+    // } catch (error) {
+    //   console.log(error);
+    //   toast({
+    //     variant: "destructive",
+    //     title: "Oppse!",
+    //     description: "Could Save Funnel Page Details",
+    //   });
+    // }
   };
 
   return (
