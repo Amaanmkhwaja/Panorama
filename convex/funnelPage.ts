@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 
 export const create = mutation({
   args: {
@@ -39,6 +39,29 @@ export const create = mutation({
   },
 });
 
+export const updateSettings = mutation({
+  args: {
+    id: v.id("funnelPage"),
+    name: v.string(),
+    pathName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const existingFunnelPage = await ctx.db.get(args.id);
+    if (!existingFunnelPage) {
+      throw new Error("Funnel Page does not exist!");
+    }
+
+    const date = new Date();
+    const dateString = date.toLocaleString();
+
+    await ctx.db.patch(existingFunnelPage._id, {
+      name: args.name,
+      pathName: args.pathName,
+      updatedAt: dateString,
+    });
+  },
+});
+
 export const update = mutation({
   args: {
     funnelPage: v.object({
@@ -52,9 +75,12 @@ export const update = mutation({
       order: v.number(),
       previewImage: v.optional(v.string()),
       funnelId: v.string(),
+      _creationTime: v.number(),
     }),
   },
   handler: async (ctx, args) => {
+    console.log("Convex received update request");
+    console.log(args);
     const date = new Date();
     const dateString = date.toLocaleString();
 
@@ -71,5 +97,18 @@ export const update = mutation({
     });
 
     return updatedFunnelPage;
+  },
+});
+
+export const getFunnelPages = query({
+  args: {
+    funnelId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const funnelPage = await ctx.db
+      .query("funnelPage")
+      .withIndex("by_funnel_id", (q) => q.eq("funnelId", args.funnelId))
+      .collect();
+    return funnelPage;
   },
 });

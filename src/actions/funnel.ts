@@ -5,6 +5,8 @@ import { revalidatePath } from "next/cache";
 import * as z from "zod";
 import { db } from "@/lib/db";
 import { v4 as uuid } from "uuid";
+import { fetchQuery } from "convex/nextjs";
+import { api } from "@/convex/_generated/api";
 
 import { FunnelSchema } from "@/schemas";
 import { UpsertFunnelPage } from "@/lib/types";
@@ -61,6 +63,19 @@ export const getFunnelById = async (id: string) => {
   });
 
   return funnel;
+};
+
+export const getFunnelByIdWithPages = async (funnelId: string) => {
+  const funnel = await db.funnel.findUnique({
+    where: { id: funnelId },
+  });
+
+  const funnelPages = await fetchQuery(api.funnelPage.getFunnelPages, {
+    funnelId,
+  });
+
+  return { funnel, funnelPages };
+  // return funnelWithPages;
 };
 
 export const updateFunnelProducts = async (

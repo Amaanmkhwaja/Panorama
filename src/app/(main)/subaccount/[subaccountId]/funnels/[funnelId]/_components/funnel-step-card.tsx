@@ -1,13 +1,14 @@
 import { createPortal } from "react-dom";
 
 import { Draggable } from "react-beautiful-dnd";
-import { FunnelPage } from "@prisma/client";
+// import { FunnelPage } from "@prisma/client";
 import { ArrowDown, Mail } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
+import { Doc } from "@/convex/_generated/dataModel";
 
 interface FunnelStepCardProps {
-  funnelPage: FunnelPage;
+  funnelPage: Doc<"funnelPage">;
   index: number;
   activePage: boolean;
 }
@@ -20,7 +21,7 @@ export const FunnelStepCard = ({
   let portal = document.getElementById("blur-page");
 
   return (
-    <Draggable draggableId={funnelPage.id.toString()} index={index}>
+    <Draggable draggableId={funnelPage._id.toString()} index={index}>
       {(provided, snapshot) => {
         if (snapshot.isDragging) {
           const offset = { x: 300 };

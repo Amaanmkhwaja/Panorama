@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import {
@@ -11,7 +11,7 @@ import {
 } from "react-beautiful-dnd";
 import { Check, ExternalLink, LucideEdit } from "lucide-react";
 
-import { FunnelPage } from "@prisma/client";
+import { Funnel, FunnelPage } from "@prisma/client";
 import { upsertFunnelPage } from "@/actions/funnel";
 import { FunnelsForSubAccount } from "@/lib/types";
 import { useModal } from "@/providers/modal-provider";
@@ -31,11 +31,15 @@ import { FunnelPageForm } from "@/components/forms/funnel-page";
 import { FunnelPagePlaceholder } from "@/components/icons/funnel-page-placeholder";
 
 import { FunnelStepCard } from "./funnel-step-card";
+import { Doc } from "@/convex/_generated/dataModel";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { FunnelPageSettings } from "./funnel-page-settings";
 
 interface FunnelStepsProps {
-  funnel: FunnelsForSubAccount;
+  funnel: Funnel;
   subaccountId: string;
-  pages: FunnelPage[];
+  pages: Doc<"funnelPage">[];
   funnelId: string;
 }
 
@@ -45,64 +49,70 @@ export const FunnelSteps = ({
   pages,
   subaccountId,
 }: FunnelStepsProps) => {
-  const [clickedPage, setClickedPage] = useState<FunnelPage | undefined>(
-    pages[0]
-  );
   const { setOpen } = useModal();
-  const [pagesState, setPagesState] = useState(pages);
-  const onDragStart = (event: DragStart) => {
-    //current chosen page
-    const { draggableId } = event;
-    const value = pagesState.find((page) => page.id === draggableId);
-  };
-
-  const onDragEnd = (dropResult: DropResult) => {
-    const { destination, source } = dropResult;
-
-    //no destination or same position
-    if (
-      !destination ||
-      (destination.droppableId === source.droppableId &&
-        destination.index === source.index)
-    ) {
-      return;
+  // const [pagesState, setPagesState] = useState(pages);
+  const funnelPages = useQuery(api.funnelPage.getFunnelPages, { funnelId });
+  const [clickedPage, setClickedPage] = useState<Doc<"funnelPage"> | undefined>(
+    undefined
+  );
+  useEffect(() => {
+    if (funnelPages) {
+      setClickedPage(funnelPages[0]);
     }
-    //change state
-    const newPageOrder = [...pagesState]
-      .toSpliced(source.index, 1)
-      .toSpliced(destination.index, 0, pagesState[source.index])
-      .map((page, idx) => {
-        return { ...page, order: idx };
-      });
+  }, [funnelPages]);
+  // const onDragStart = (event: DragStart) => {
+  //   //current chosen page
+  //   const { draggableId } = event;
+  //   const value = pagesState.find((page) => page.id === draggableId);
+  // };
 
-    setPagesState(newPageOrder);
-    newPageOrder.forEach(async (page, index) => {
-      try {
-        await upsertFunnelPage(
-          subaccountId,
-          {
-            id: page.id,
-            order: index,
-            name: page.name,
-          },
-          funnelId
-        );
-      } catch (error) {
-        console.log(error);
-        toast({
-          variant: "destructive",
-          title: "Failed",
-          description: "Could not save page order",
-        });
-        return;
-      }
-    });
+  // const onDragEnd = (dropResult: DropResult) => {
+  //   const { destination, source } = dropResult;
 
-    toast({
-      title: "Success",
-      description: "Saved page order",
-    });
-  };
+  //   //no destination or same position
+  //   if (
+  //     !destination ||
+  //     (destination.droppableId === source.droppableId &&
+  //       destination.index === source.index)
+  //   ) {
+  //     return;
+  //   }
+  //   //change state
+  //   const newPageOrder = [...pagesState]
+  //     .toSpliced(source.index, 1)
+  //     .toSpliced(destination.index, 0, pagesState[source.index])
+  //     .map((page, idx) => {
+  //       return { ...page, order: idx };
+  //     });
+
+  //   setPagesState(newPageOrder);
+  //   newPageOrder.forEach(async (page, index) => {
+  //     try {
+  //       await upsertFunnelPage(
+  //         subaccountId,
+  //         {
+  //           id: page.id,
+  //           order: index,
+  //           name: page.name,
+  //         },
+  //         funnelId
+  //       );
+  //     } catch (error) {
+  //       console.log(error);
+  //       toast({
+  //         variant: "destructive",
+  //         title: "Failed",
+  //         description: "Could not save page order",
+  //       });
+  //       return;
+  //     }
+  //   });
+
+  //   toast({
+  //     title: "Success",
+  //     description: "Saved page order",
+  //   });
+  // };
 
   return (
     <AlertDialog>
@@ -113,8 +123,8 @@ export const FunnelSteps = ({
               <Check />
               Funnel Steps
             </div>
-            {pagesState.length ? (
-              <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
+            {funnelPages && funnelPages.length ? (
+              <DragDropContext onDragEnd={() => {}} onDragStart={() => {}}>
                 <Droppable
                   droppableId="funnels"
                   direction="vertical"
@@ -122,17 +132,17 @@ export const FunnelSteps = ({
                 >
                   {(provided) => (
                     <div {...provided.droppableProps} ref={provided.innerRef}>
-                      {pagesState.map((page, idx) => (
+                      {funnelPages.map((page, idx) => (
                         <div
                           className="relative"
-                          key={page.id}
+                          key={page._id}
                           onClick={() => setClickedPage(page)}
                         >
                           <FunnelStepCard
                             funnelPage={page}
                             index={idx}
-                            key={page.id}
-                            activePage={page.id === clickedPage?.id}
+                            key={page._id}
+                            activePage={page._id === clickedPage?._id}
                           />
                         </div>
                       ))}
@@ -148,74 +158,34 @@ export const FunnelSteps = ({
           </ScrollArea>
           <Button
             className="mt-4 w-full"
+            disabled={!funnelPages}
             onClick={() => {
-              setOpen(
-                <CustomModal
-                  title=" Create or Update a Funnel Page"
-                  subheading="Funnel Pages allow you to create step by step processes for customers to follow"
-                >
-                  <FunnelPageForm
-                    subaccountId={subaccountId}
-                    funnelId={funnelId}
-                    order={pagesState.length}
-                  />
-                </CustomModal>
-              );
+              if (funnelPages) {
+                setOpen(
+                  <CustomModal
+                    title=" Create or Update a Funnel Page"
+                    subheading="Funnel Pages allow you to create step by step processes for customers to follow"
+                  >
+                    <FunnelPageForm
+                      subaccountId={subaccountId}
+                      funnelId={funnelId}
+                      order={funnelPages.length}
+                    />
+                  </CustomModal>
+                );
+              }
             }}
           >
             Create New Steps
           </Button>
         </aside>
-        <aside className="flex-[0.7] bg-muted p-4 ">
-          {!!pages.length ? (
-            <Card className="h-full flex justify-between flex-col">
-              <CardHeader>
-                <p className="text-sm text-muted-foreground">Page name</p>
-                <CardTitle>{clickedPage?.name}</CardTitle>
-                <CardDescription className="flex flex-col gap-4">
-                  <div className="border-2 rounded-lg sm:w-80 w-full  overflow-clip">
-                    <Link
-                      href={`/subaccount/${subaccountId}/funnels/${funnelId}/editor/${clickedPage?.id}`}
-                      className="relative group"
-                    >
-                      <div className="cursor-pointer group-hover:opacity-30 w-full">
-                        <FunnelPagePlaceholder />
-                      </div>
-                      <LucideEdit
-                        size={50}
-                        className="!text-muted-foreground absolute top-1/2 left-1/2 opacity-0 transofrm -translate-x-1/2 -translate-y-1/2 group-hover:opacity-100 transition-all duration-100"
-                      />
-                    </Link>
-
-                    <Link
-                      target="_blank"
-                      href={`${process.env.NEXT_PUBLIC_SCHEME}${funnel.subDomainName}.${process.env.NEXT_PUBLIC_DOMAIN}/${clickedPage?.pathName}`}
-                      className="group flex items-center justify-start p-2 gap-2 hover:text-primary transition-colors duration-200"
-                    >
-                      <ExternalLink size={15} />
-                      <div className="w-64 overflow-hidden overflow-ellipsis ">
-                        {process.env.NEXT_PUBLIC_SCHEME}
-                        {funnel.subDomainName}.{process.env.NEXT_PUBLIC_DOMAIN}/
-                        {clickedPage?.pathName}
-                      </div>
-                    </Link>
-                  </div>
-
-                  <FunnelPageForm
-                    subaccountId={subaccountId}
-                    defaultData={clickedPage}
-                    funnelId={funnelId}
-                    order={clickedPage?.order || 0}
-                  />
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          ) : (
-            <div className="h-[600px] flex items-center justify-center text-muted-foreground">
-              Create a page to view page settings.
-            </div>
-          )}
-        </aside>
+        <FunnelPageSettings
+          pages={pages}
+          clickedPage={clickedPage}
+          funnelId={funnelId}
+          subaccountId={subaccountId}
+          subDomainName={funnel.subDomainName}
+        />
       </div>
     </AlertDialog>
   );

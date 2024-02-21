@@ -9,7 +9,6 @@ import { useMutation } from "convex/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CopyPlusIcon, Loader2, Trash } from "lucide-react";
 
-import { FunnelPage } from "@prisma/client";
 import { FunnelPageSchema } from "@/schemas";
 import { saveActivityLogsNotification } from "@/actions/notification";
 import {
@@ -39,10 +38,10 @@ import { useToast } from "@/components/ui/use-toast";
 import { toast as sonnerToast } from "sonner";
 import { useModal } from "@/providers/modal-provider";
 import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
+import { Doc } from "@/convex/_generated/dataModel";
 
 interface FunnelPageFormProps {
-  defaultData?: FunnelPage;
+  defaultData?: Doc<"funnelPage">;
   funnelId: string;
   order: number;
   subaccountId: string;
@@ -59,7 +58,7 @@ export const FunnelPageForm = ({
   const router = useRouter();
 
   const createFunnelPage = useMutation(api.funnelPage.create);
-  const updateFunnelPage = useMutation(api.funnelPage.update);
+  const updateFunnelPageSettings = useMutation(api.funnelPage.updateSettings);
 
   const form = useForm<z.infer<typeof FunnelPageSchema>>({
     resolver: zodResolver(FunnelPageSchema),
@@ -83,17 +82,10 @@ export const FunnelPageForm = ({
           "Pages other than the first page in the funnel require a path name example 'secondstep'.",
       });
     if (defaultData) {
-      const createdAtString = defaultData.createdAt.toLocaleString();
-      const updatedAtString = defaultData.updatedAt.toLocaleString();
-      const updatePromise = updateFunnelPage({
-        funnelPage: {
-          ...defaultData,
-          id: defaultData.id as Id<"funnelPage">,
-          createdAt: createdAtString,
-          updatedAt: updatedAtString,
-          previewImage: defaultData.previewImage || undefined,
-          content: defaultData.previewImage || undefined,
-        },
+      const updatePromise = updateFunnelPageSettings({
+        id: defaultData._id,
+        name: values.name,
+        pathName: values.pathName || "",
       }).then(async () => {
         await saveActivityLogsNotification({
           agencyId: undefined,
@@ -101,13 +93,13 @@ export const FunnelPageForm = ({
           subaccountId: subaccountId,
         });
         setClose();
-        router.refresh();
       });
 
       sonnerToast.promise(updatePromise, {
-        loading: "Saving...",
-        success: "Saved Funnel Page Details",
-        error: "Error saving funnel page details.",
+        loading: "Updating funnel page...",
+        success: "Updated Funnel Page settings",
+        error: "Error updating funnel page settings.",
+        duration: 5000,
       });
     } else {
       const createPromise = createFunnelPage({
@@ -122,7 +114,6 @@ export const FunnelPageForm = ({
           subaccountId: subaccountId,
         });
         setClose();
-        router.refresh();
       });
 
       sonnerToast.promise(createPromise, {
@@ -131,39 +122,6 @@ export const FunnelPageForm = ({
         error: "Error creating funnel page!",
       });
     }
-    // try {
-    //   const response = await upsertFunnelPage(
-    //     subaccountId,
-    //     {
-    //       ...values,
-    //       id: defaultData?.id || uuid(),
-    //       order: defaultData?.order || order,
-    //       pathName: values.pathName || "",
-    //     },
-    //     funnelId
-    //   );
-
-    //   await saveActivityLogsNotification({
-    //     agencyId: undefined,
-    //     description: `Updated a funnel page | ${response?.name}`,
-    //     subaccountId: subaccountId,
-    //   });
-
-    //   toast({
-    //     variant: "success",
-    //     title: "Success",
-    //     description: "Saved Funnel Page Details",
-    //   });
-    //   setClose();
-    //   router.refresh();
-    // } catch (error) {
-    //   console.log(error);
-    //   toast({
-    //     variant: "destructive",
-    //     title: "Oppse!",
-    //     description: "Could Save Funnel Page Details",
-    //   });
-    // }
   };
 
   return (
@@ -226,14 +184,14 @@ export const FunnelPageForm = ({
                 )}
               </Button>
 
-              {defaultData?.id && (
+              {defaultData?._id && (
                 <Button
                   variant={"outline"}
                   className="w-22 self-end border-destructive text-destructive hover:bg-destructive"
                   disabled={form.formState.isSubmitting}
                   type="button"
                   onClick={async () => {
-                    const response = await deleteFunnelePage(defaultData.id);
+                    const response = await deleteFunnelePage(defaultData._id);
                     if (response) {
                       await saveActivityLogsNotification({
                         agencyId: undefined,
@@ -264,7 +222,7 @@ export const FunnelPageForm = ({
                   )}
                 </Button>
               )}
-              {defaultData?.id && (
+              {defaultData?._id && (
                 <Button
                   variant={"outline"}
                   size={"icon"}
