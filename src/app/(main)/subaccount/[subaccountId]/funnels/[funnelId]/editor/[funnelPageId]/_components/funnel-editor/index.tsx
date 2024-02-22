@@ -5,19 +5,21 @@ import { useEffect } from "react";
 import clsx from "clsx";
 import { EyeOff } from "lucide-react";
 
-import { getFunnelPageDetails } from "@/actions/funnel";
+// import { getFunnelPageDetails } from "@/actions/funnel";
 import { useEditor } from "@/providers/editor/editor-provider";
 
 import { Button } from "@/components/ui/button";
 
 import { Recursive } from "./funnel-editor-components/recursive";
+import { Doc } from "@/convex/_generated/dataModel";
 
 interface FunnelEditorProps {
-  funnelPageId: string;
+  // funnelPageId: string;
+  funnelPageDetails: Doc<"funnelPage">;
   liveMode?: boolean;
 }
 
-const FunnelEditor = ({ funnelPageId, liveMode }: FunnelEditorProps) => {
+const FunnelEditor = ({ funnelPageDetails, liveMode }: FunnelEditorProps) => {
   const { dispatch, state } = useEditor();
 
   useEffect(() => {
@@ -29,23 +31,37 @@ const FunnelEditor = ({ funnelPageId, liveMode }: FunnelEditorProps) => {
     }
   }, [liveMode]);
 
-  // TODO CHALLENGE: make this more performant
-  // if this is being rendered on the client - check for more details (13:34:00)
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await getFunnelPageDetails(funnelPageId);
-      if (!response) return;
-
+    if (funnelPageDetails) {
       dispatch({
         type: "LOAD_DATA",
         payload: {
-          elements: response.content ? JSON.parse(response?.content) : "",
+          elements: funnelPageDetails.content
+            ? JSON.parse(funnelPageDetails.content)
+            : "",
           withLive: !!liveMode,
         },
       });
-    };
-    fetchData();
-  }, [funnelPageId]);
+    }
+  }, [funnelPageDetails]);
+
+  // TODO CHALLENGE: make this more performant
+  // if this is being rendered on the client - check for more details (13:34:00)
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const response = await getFunnelPageDetails(funnelPageId);
+  //     if (!response) return;
+
+  //     dispatch({
+  //       type: "LOAD_DATA",
+  //       payload: {
+  //         elements: response.content ? JSON.parse(response?.content) : "",
+  //         withLive: !!liveMode,
+  //       },
+  //     });
+  //   };
+  //   fetchData();
+  // }, [funnelPageId]);
 
   const handleClick = () => {
     dispatch({
@@ -84,7 +100,11 @@ const FunnelEditor = ({ funnelPageId, liveMode }: FunnelEditorProps) => {
       )}
       {Array.isArray(state.editor.elements) &&
         state.editor.elements.map((childElement) => (
-          <Recursive key={childElement.id} element={childElement} />
+          <Recursive
+            key={childElement.id}
+            element={childElement}
+            funnelPageId={funnelPageDetails._id}
+          />
         ))}
     </div>
   );

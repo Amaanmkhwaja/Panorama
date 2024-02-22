@@ -58,6 +58,7 @@ export const FunnelPageForm = ({
   const router = useRouter();
 
   const createFunnelPage = useMutation(api.funnelPage.create);
+  const deleteFunnelPage = useMutation(api.funnelPage.deleteFunnelPage);
   const updateFunnelPageSettings = useMutation(api.funnelPage.updateSettings);
 
   const form = useForm<z.infer<typeof FunnelPageSchema>>({
@@ -122,6 +123,23 @@ export const FunnelPageForm = ({
         error: "Error creating funnel page!",
       });
     }
+  };
+
+  const handleDelete = async () => {
+    if (!defaultData) return;
+    const promise = deleteFunnelPage({ id: defaultData._id }).then(async () => {
+      await saveActivityLogsNotification({
+        agencyId: undefined,
+        description: `Deleted a funnel page | ${defaultData.name}`,
+        subaccountId: subaccountId,
+      });
+    });
+
+    sonnerToast.promise(promise, {
+      loading: "Deleting...",
+      success: "Deleted Funnel Page",
+      error: "Error deleting funnel page!",
+    });
   };
 
   return (
@@ -190,30 +208,7 @@ export const FunnelPageForm = ({
                   className="w-22 self-end border-destructive text-destructive hover:bg-destructive"
                   disabled={form.formState.isSubmitting}
                   type="button"
-                  onClick={async () => {
-                    const response = await deleteFunnelePage(defaultData._id);
-                    if (response) {
-                      await saveActivityLogsNotification({
-                        agencyId: undefined,
-                        description: `Deleted a funnel page | ${response?.name}`,
-                        subaccountId: subaccountId,
-                      });
-                      toast({
-                        variant: "success",
-                        title: "Success",
-                        description: `Deleted funnel page: ${response?.name}.`,
-                      });
-                      setClose();
-                      router.refresh();
-                    } else {
-                      toast({
-                        variant: "destructive",
-                        title: "Error",
-                        description:
-                          "Something went wrong deleting funnel page.",
-                      });
-                    }
-                  }}
+                  onClick={handleDelete}
                 >
                   {form.formState.isSubmitting ? (
                     <Loader2 className="animate-spin" />
@@ -222,7 +217,8 @@ export const FunnelPageForm = ({
                   )}
                 </Button>
               )}
-              {defaultData?._id && (
+              {/* TODO: implment copying funnel pages with Convex */}
+              {/* {defaultData?._id && (
                 <Button
                   variant={"outline"}
                   size={"icon"}
@@ -270,7 +266,7 @@ export const FunnelPageForm = ({
                     <CopyPlusIcon />
                   )}
                 </Button>
-              )}
+              )} */}
             </div>
           </form>
         </Form>

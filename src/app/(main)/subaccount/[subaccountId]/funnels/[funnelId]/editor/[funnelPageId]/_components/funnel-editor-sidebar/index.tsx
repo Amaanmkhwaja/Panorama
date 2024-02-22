@@ -17,9 +17,11 @@ import { SettingsTab } from "./tabs/settings-tab";
 import ComponentsTab from "./tabs/components-tab";
 import { MediaBucketTab } from "./tabs/media-bucket-tab";
 import { LayersTab } from "./tabs/layers-tab";
+import { Id } from "@/convex/_generated/dataModel";
 
 interface FunnelEditorSidebarProps {
   subaccountId: string;
+  funnelPageId: Id<"funnelPage">;
 }
 
 const FunnelEditorSidebar = ({ subaccountId }: FunnelEditorSidebarProps) => {

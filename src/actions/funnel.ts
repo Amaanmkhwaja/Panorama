@@ -5,11 +5,12 @@ import { revalidatePath } from "next/cache";
 import * as z from "zod";
 import { db } from "@/lib/db";
 import { v4 as uuid } from "uuid";
-import { fetchQuery } from "convex/nextjs";
+import { fetchMutation, fetchQuery } from "convex/nextjs";
 import { api } from "@/convex/_generated/api";
 
 import { FunnelSchema } from "@/schemas";
 import { UpsertFunnelPage } from "@/lib/types";
+import { Id } from "@/convex/_generated/dataModel";
 
 export const upsertFunnel = async (
   subaccountId: string,
@@ -142,4 +143,27 @@ export const getFunnelPageDetails = async (funnelPageId: string) => {
   });
 
   return response;
+};
+
+export const updateFunnelPageContentInDB = async (
+  funnelPageId: Id<"funnelPage">,
+  content: string
+) => {
+  if (!funnelPageId || !content) {
+    return { error: "Invalid fields!" };
+  }
+
+  const res = await fetchMutation(api.funnelPage.updateFunnelPageContent, {
+    id: funnelPageId,
+    content: content,
+  });
+
+  if (res.success) {
+    return { success: res.success };
+  }
+  if (res.error) {
+    return { error: res.error };
+  }
+
+  return { error: "Something went wrong" };
 };

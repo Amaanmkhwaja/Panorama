@@ -6,12 +6,17 @@ import { Trash } from "lucide-react";
 import { EditorElement, useEditor } from "@/providers/editor/editor-provider";
 
 import { Badge } from "@/components/ui/badge";
+import { Id } from "@/convex/_generated/dataModel";
 
 interface TextComponentProps {
   element: EditorElement;
+  funnelPageId: Id<"funnelPage">;
 }
 
-export const TextComponent = ({ element }: TextComponentProps) => {
+export const TextComponent = ({
+  element,
+  funnelPageId,
+}: TextComponentProps) => {
   const { dispatch, state } = useEditor();
 
   const handleDeleteElement = () => {

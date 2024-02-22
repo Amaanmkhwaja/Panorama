@@ -17,9 +17,12 @@ import { saveActivityLogsNotification } from "@/actions/notification";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/components/ui/use-toast";
 import { ContactForm } from "@/components/forms/contact-form";
+import { deleteElementAndSaveToDB } from "@/lib/elements";
+import { Id } from "@/convex/_generated/dataModel";
 
 interface ContactFormComponentProps {
   element: EditorElement;
+  funnelPageId: Id<"funnelPage">;
 }
 
 export const ContactFormComponent = (props: ContactFormComponentProps) => {
@@ -58,11 +61,19 @@ export const ContactFormComponent = (props: ContactFormComponentProps) => {
     }
   };
 
-  const handleDeleteElement = () => {
-    dispatch({
-      type: "DELETE_ELEMENT",
-      payload: { elementDetails: props.element },
-    });
+  const handleDeleteElement = async () => {
+    const response = await deleteElementAndSaveToDB(
+      props.funnelPageId,
+      state.editor.elements,
+      props.element
+    );
+    if (response.error) {
+      toast({
+        variant: "destructive",
+        title: "Failed",
+        description: response.error,
+      });
+    }
   };
 
   const onFormSubmit = async (values: z.infer<typeof ContactFormSchema>) => {

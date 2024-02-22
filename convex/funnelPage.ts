@@ -83,44 +83,6 @@ export const updateOrder = mutation({
   },
 });
 
-export const update = mutation({
-  args: {
-    funnelPage: v.object({
-      id: v.id("funnelPage"),
-      name: v.string(),
-      pathName: v.string(),
-      createdAt: v.string(),
-      updatedAt: v.string(),
-      visits: v.number(),
-      content: v.optional(v.string()),
-      order: v.number(),
-      previewImage: v.optional(v.string()),
-      funnelId: v.string(),
-      _creationTime: v.number(),
-    }),
-  },
-  handler: async (ctx, args) => {
-    console.log("Convex received update request");
-    console.log(args);
-    const date = new Date();
-    const dateString = date.toLocaleString();
-
-    const { funnelPage } = args;
-
-    const existingFunnelPage = await ctx.db.get(funnelPage.id);
-    if (!existingFunnelPage) {
-      throw new Error("Funnel Page not found!");
-    }
-
-    const updatedFunnelPage = await ctx.db.patch(funnelPage.id, {
-      ...funnelPage,
-      updatedAt: dateString,
-    });
-
-    return updatedFunnelPage;
-  },
-});
-
 export const getFunnelPages = query({
   args: {
     funnelId: v.string(),
@@ -133,5 +95,74 @@ export const getFunnelPages = query({
       .filter((q) => q.eq(q.field("funnelId"), args.funnelId))
       .collect();
     return funnelPage;
+  },
+});
+
+export const getFunnelPageById = query({
+  args: {
+    id: v.id("funnelPage"),
+  },
+  handler: async (ctx, args) => {
+    const existingFunnelPage = await ctx.db.get(args.id);
+    if (!existingFunnelPage) {
+      throw new Error("Funnel Page does not exist");
+    }
+
+    return existingFunnelPage;
+  },
+});
+
+export const updateFunnelPageName = mutation({
+  args: {
+    id: v.id("funnelPage"),
+    name: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const existingFunnelPage = await ctx.db.get(args.id);
+    if (!existingFunnelPage) {
+      return { error: "Funnel Page does not exist" };
+      // throw new Error("Funnel Page does not exist");
+    }
+
+    await ctx.db.patch(existingFunnelPage._id, {
+      name: args.name,
+    });
+
+    return { success: "Saved changes" };
+  },
+});
+
+export const updateFunnelPageContent = mutation({
+  args: {
+    id: v.id("funnelPage"),
+    content: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const existingFunnelPage = await ctx.db.get(args.id);
+    if (!existingFunnelPage) {
+      return { error: "Funnel Page does not exist" };
+      // throw new Error("Funnel Page does not exist");
+    }
+
+    await ctx.db.patch(existingFunnelPage._id, {
+      content: args.content,
+    });
+
+    return { success: "Saved changes" };
+  },
+});
+
+export const deleteFunnelPage = mutation({
+  args: {
+    id: v.id("funnelPage"),
+  },
+  handler: async (ctx, args) => {
+    const existingFunnelPage = await ctx.db.get(args.id);
+    if (!existingFunnelPage) {
+      throw new Error("Funnel Page does not exist");
+    }
+
+    await ctx.db.delete(existingFunnelPage._id);
+    // TODO: update remaining funnel pages order, decrement
   },
 });

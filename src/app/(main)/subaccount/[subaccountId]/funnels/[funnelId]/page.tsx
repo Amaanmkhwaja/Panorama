@@ -1,11 +1,7 @@
-// "use client";
-
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { ArrowLeft } from "lucide-react";
-// import { useQuery } from "convex/react";
-import { getFunnelById } from "@/data/funnel";
 
 import { BlurPage } from "@/components/blur-page";
 import { buttonVariants } from "@/components/ui/button";
@@ -14,20 +10,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FunnelSteps } from "./_components/funnel-steps";
 import { FunnelSettings } from "./_components/funnel-settings";
 import { getFunnelByIdWithPages } from "@/actions/funnel";
-// import { api } from "@/convex/_generated/api";
 
 interface FunnelIdPageProps {
   params: { funnelId: string; subaccountId: string };
 }
 
 const FunnelIdPage = async ({ params }: FunnelIdPageProps) => {
-  // const funnelPages = await getFunnelById(params.funnelId);
-  // if (!funnelPages)
-  //   return redirect(`/subaccount/${params.subaccountId}/funnels`);
-  // const funnelPages = useQuery(api.funnelPage.getFunnelPages, {
-  //   funnelId: params.funnelId,
-  // });
-  // console.log(funnelPages);
+  // TODO: Update code that is still using getFunnelById to use getFunnelByIdWithPages
   const { funnel, funnelPages } = await getFunnelByIdWithPages(params.funnelId);
   if (!funnel) {
     return redirect(`/subaccount/${params.subaccountId}/funnels`);
