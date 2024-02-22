@@ -2,7 +2,6 @@
 
 import { FocusEventHandler, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 import {
   ArrowLeftCircle,
@@ -16,10 +15,7 @@ import {
 import clsx from "clsx";
 import { toast } from "sonner";
 
-import { FunnelPage } from "@prisma/client";
-import { upsertFunnelPage } from "@/actions/funnel";
 import { saveActivityLogsNotification } from "@/actions/notification";
-// import { useHistory, useCanUndo, useCanRedo } from "@/liveblocks.config";
 import { DeviceTypes, useEditor } from "@/providers/editor/editor-provider";
 
 import {
@@ -49,11 +45,7 @@ export const FunnelEditorNavigation = ({
   funnelPageDetails,
   subaccountId,
 }: FunnelEditorNavigationProps) => {
-  const router = useRouter();
   const { state, dispatch } = useEditor();
-  // const history = useHistory();
-  // const canUndo = useCanUndo();
-  // const canRedo = useCanRedo();
   const saveFunnelPageContent = useMutation(
     api.funnelPage.updateFunnelPageContent
   );
@@ -126,28 +118,6 @@ export const FunnelEditorNavigation = ({
       success: "Saved changes!",
       error: "Could not save changes!",
     });
-    // try {
-    //   const response = await upsertFunnelPage(
-    //     subaccountId,
-    //     {
-    //       ...funnelPageDetails,
-    //       content,
-    //     },
-    //     funnelId
-    //   );
-    //   await saveActivityLogsNotification({
-    //     agencyId: undefined,
-    //     description: `Updated a funnel page | ${response?.name}`,
-    //     subaccountId: subaccountId,
-    //   });
-    //   toast.success("Success", {
-    //     description: "Saved Editor",
-    //   });
-    // } catch (error) {
-    //   toast.error("Error!", {
-    //     description: "Could not save editor",
-    //   });
-    // }
   };
 
   return (
@@ -269,7 +239,7 @@ export const FunnelEditorNavigation = ({
               Last updated {funnelPageDetails.updatedAt.toLocaleDateString()}
             </span>
           </div> */}
-          <Button onClick={handleOnSave}>Save</Button>
+          {/* <Button onClick={handleOnSave}>Save</Button> */}
         </aside>
       </nav>
     </TooltipProvider>

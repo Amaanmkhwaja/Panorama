@@ -96,7 +96,7 @@ export const addAnElement = (
   });
 };
 
-const updateAnElement = (
+export const updateAnElement = (
   editorArray: EditorElement[],
   action: EditorAction
 ): EditorElement[] => {
@@ -167,7 +167,9 @@ const editorReducer = (
 
     case "UPDATE_ELEMENT":
       // Perform your logic to update the element in the state
+      console.log({ payload: action.payload });
       const updatedElements = updateAnElement(state.editor.elements, action);
+      console.log({ updatedElements });
 
       const UpdatedElementIsSelected =
         state.editor.selectedElement.id === action.payload.elementDetails.id;

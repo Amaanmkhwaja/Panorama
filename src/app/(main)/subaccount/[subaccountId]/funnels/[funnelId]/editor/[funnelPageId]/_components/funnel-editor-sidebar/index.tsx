@@ -24,7 +24,10 @@ interface FunnelEditorSidebarProps {
   funnelPageId: Id<"funnelPage">;
 }
 
-const FunnelEditorSidebar = ({ subaccountId }: FunnelEditorSidebarProps) => {
+const FunnelEditorSidebar = ({
+  subaccountId,
+  funnelPageId,
+}: FunnelEditorSidebarProps) => {
   const { state } = useEditor();
   return (
     <Sheet open={true} modal={false}>
@@ -56,7 +59,7 @@ const FunnelEditorSidebar = ({ subaccountId }: FunnelEditorSidebarProps) => {
                   like.
                 </SheetDescription>
               </SheetHeader>
-              <SettingsTab />
+              <SettingsTab funnelPageId={funnelPageId} />
             </TabsContent>
             <TabsContent value="Media">
               <MediaBucketTab subaccountId={subaccountId} />
