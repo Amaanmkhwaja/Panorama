@@ -3,15 +3,19 @@
 import Link from "next/link";
 
 import clsx from "clsx";
+import { toast } from "sonner";
 import { Trash } from "lucide-react";
 
 import { EditorBtns } from "@/lib/constants";
 import { EditorElement, useEditor } from "@/providers/editor/editor-provider";
 
 import { Badge } from "@/components/ui/badge";
+import { Id } from "@/convex/_generated/dataModel";
+import { deleteElementAndSaveToDB } from "@/lib/elements";
 
 interface LinkComponentProps {
   element: EditorElement;
+  funnelPageId: Id<"funnelPage">;
 }
 
 export const LinkComponent = (props: LinkComponentProps) => {
@@ -34,11 +38,15 @@ export const LinkComponent = (props: LinkComponentProps) => {
 
   const styles = props.element.styles;
 
-  const handleDeleteElement = () => {
-    dispatch({
-      type: "DELETE_ELEMENT",
-      payload: { elementDetails: props.element },
-    });
+  const handleDeleteElement = async () => {
+    const response = await deleteElementAndSaveToDB(
+      props.funnelPageId,
+      state.editor.elements,
+      props.element
+    );
+    if (response.error) {
+      toast.error(response.error);
+    }
   };
 
   return (

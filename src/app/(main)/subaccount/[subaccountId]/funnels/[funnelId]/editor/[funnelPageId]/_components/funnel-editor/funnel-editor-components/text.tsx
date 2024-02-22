@@ -7,6 +7,8 @@ import { EditorElement, useEditor } from "@/providers/editor/editor-provider";
 
 import { Badge } from "@/components/ui/badge";
 import { Id } from "@/convex/_generated/dataModel";
+import { deleteElementAndSaveToDB } from "@/lib/elements";
+import { toast } from "sonner";
 
 interface TextComponentProps {
   element: EditorElement;
@@ -19,11 +21,15 @@ export const TextComponent = ({
 }: TextComponentProps) => {
   const { dispatch, state } = useEditor();
 
-  const handleDeleteElement = () => {
-    dispatch({
-      type: "DELETE_ELEMENT",
-      payload: { elementDetails: element },
-    });
+  const handleDeleteElement = async () => {
+    const response = await deleteElementAndSaveToDB(
+      funnelPageId,
+      state.editor.elements,
+      element
+    );
+    if (response.error) {
+      toast.error(response.error);
+    }
   };
   const styles = element.styles;
 

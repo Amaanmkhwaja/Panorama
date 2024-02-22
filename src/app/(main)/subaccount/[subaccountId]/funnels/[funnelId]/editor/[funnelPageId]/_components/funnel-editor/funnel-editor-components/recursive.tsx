@@ -22,20 +22,20 @@ export const Recursive = ({ element, funnelPageId }: RecursiveProps) => {
     case "container":
       return <Container element={element} funnelPageId={funnelPageId} />;
     case "video":
-      return <VideoComponent element={element} />;
+      return <VideoComponent element={element} funnelPageId={funnelPageId} />;
     case "contactForm":
       return (
         <ContactFormComponent element={element} funnelPageId={funnelPageId} />
       );
     case "paymentForm":
-      return <Checkout element={element} />;
+      return <Checkout element={element} funnelPageId={funnelPageId} />;
     case "2Col":
       return <Container element={element} funnelPageId={funnelPageId} />;
     case "__body":
       return <Container element={element} funnelPageId={funnelPageId} />;
 
     case "link":
-      return <LinkComponent element={element} />;
+      return <LinkComponent element={element} funnelPageId={funnelPageId} />;
     default:
       return null;
   }

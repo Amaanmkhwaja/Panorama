@@ -1,10 +1,10 @@
 "use client";
 
 import clsx from "clsx";
-import { v4 as uuid } from "uuid";
+import { toast } from "sonner";
 import { Trash } from "lucide-react";
 
-import { EditorBtns, defaultStyles } from "@/lib/constants";
+import { EditorBtns } from "@/lib/constants";
 import {
   EditorElement,
   addAnElement,
@@ -17,8 +17,7 @@ import { Recursive } from "./recursive";
 import { EditorAction } from "@/providers/editor/editor-actions";
 import { updateFunnelPageContentInDB } from "@/actions/funnel";
 import { Id } from "@/convex/_generated/dataModel";
-import { toast } from "sonner";
-import { elementDetails } from "@/lib/elements";
+import { deleteElementAndSaveToDB, elementDetails } from "@/lib/elements";
 
 interface ContainerProps {
   element: EditorElement;
@@ -135,13 +134,15 @@ export const Container = ({ element, funnelPageId }: ContainerProps) => {
     });
   };
 
-  const handleDeleteElement = () => {
-    dispatch({
-      type: "DELETE_ELEMENT",
-      payload: {
-        elementDetails: element,
-      },
-    });
+  const handleDeleteElement = async () => {
+    const response = await deleteElementAndSaveToDB(
+      funnelPageId,
+      state.editor.elements,
+      element
+    );
+    if (response.error) {
+      toast.error(response.error);
+    }
   };
 
   return (

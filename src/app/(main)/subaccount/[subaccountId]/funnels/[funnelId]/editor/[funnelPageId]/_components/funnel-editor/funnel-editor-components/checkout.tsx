@@ -8,6 +8,7 @@ import {
   EmbeddedCheckoutProvider,
 } from "@stripe/react-stripe-js";
 import clsx from "clsx";
+import { toast } from "sonner";
 import { Trash } from "lucide-react";
 
 import { EditorBtns } from "@/lib/constants";
@@ -18,11 +19,13 @@ import { getFunnelById } from "@/actions/funnel";
 import { getSubaccountDetailsById } from "@/actions/subaccount";
 
 import { Badge } from "@/components/ui/badge";
-import { toast } from "@/components/ui/use-toast";
 import { Loading } from "@/components/global/loading";
+import { Id } from "@/convex/_generated/dataModel";
+import { deleteElementAndSaveToDB } from "@/lib/elements";
 
 interface CheckoutProps {
   element: EditorElement;
+  funnelPageId: Id<"funnelPage">;
 }
 
 export const Checkout = (props: CheckoutProps) => {
@@ -38,21 +41,13 @@ export const Checkout = (props: CheckoutProps) => {
 
   useEffect(() => {
     if (!subaccountId) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "No subbaccountId was given!",
-      });
+      toast.error("No subbaccountId was given!");
       return;
     }
     const fetchData = async () => {
       const subaccountDetails = await getSubaccountDetailsById(subaccountId);
       if (subaccountDetails.error) {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: subaccountDetails.error,
-        });
+        toast.error(subaccountDetails.error);
         return;
       }
       if (subaccountDetails.success) {
@@ -65,11 +60,7 @@ export const Checkout = (props: CheckoutProps) => {
           subaccountDetails.subAccountDetails.connectAccountId
         );
         if (!subaccountDetails.subAccountDetails.connectAccountId) {
-          toast({
-            variant: "destructive",
-            title: "Error",
-            description: "SubAccountDetails connectedAccountId doesnt exist",
-          });
+          toast.error("SubAccountDetails connectedAccountId doesnt exist");
           return;
         }
         setSubAccountConnectAccId(
@@ -126,13 +117,17 @@ export const Checkout = (props: CheckoutProps) => {
             setClientSecret(responseJson.clientSecret);
           }
         } catch (error) {
-          toast({
-            open: true,
+          // toast({
+          //   open: true,
+          //   className: "z-[100000]",
+          //   variant: "destructive",
+          //   title: "Oppse!",
+          //   //@ts-ignore
+          //   description: error.message,
+          // });
+          // @ts-ignore
+          toast.error(error.message, {
             className: "z-[100000]",
-            variant: "destructive",
-            title: "Oppse!",
-            //@ts-ignore
-            description: error.message,
           });
         }
       };
@@ -173,11 +168,15 @@ export const Checkout = (props: CheckoutProps) => {
     }
   };
 
-  const handleDeleteElement = () => {
-    dispatch({
-      type: "DELETE_ELEMENT",
-      payload: { elementDetails: props.element },
-    });
+  const handleDeleteElement = async () => {
+    const response = await deleteElementAndSaveToDB(
+      props.funnelPageId,
+      state.editor.elements,
+      props.element
+    );
+    if (response.error) {
+      toast.error(response.error);
+    }
   };
 
   return (
