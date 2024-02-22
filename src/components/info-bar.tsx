@@ -123,7 +123,7 @@ export const InfoBar = ({
               )}
             </SheetContent>
           </Sheet>
-          <ModeToggle />
+          {/* <ModeToggle /> */}
         </div>
       </div>
     </>
