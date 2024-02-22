@@ -29,7 +29,7 @@ import { Input } from "@/components/ui/input";
 // import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-// import { Participants } from "./participants";
+import { Participants } from "./participants";
 import { Doc } from "@/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -199,7 +199,7 @@ export const FunnelEditorNavigation = ({
           </Tabs>
         </aside>
         <aside className="flex items-center gap-2">
-          {/* <Participants /> */}
+          <Participants />
           <Button
             variant={"ghost"}
             size={"icon"}

@@ -1,11 +1,10 @@
 "use client";
 
-// import { FunnelPage } from "@prisma/client";
-// import { useMyPresence, useOthers } from "@/liveblocks.config";
+import { useMyPresence, useOthers } from "@/liveblocks.config";
 import EditorProvider from "@/providers/editor/editor-provider";
-// import { connectionIdToColor } from "@/lib/utils";
+import { connectionIdToColor } from "@/lib/utils";
 
-// import { Cursor } from "./cursor";
+import { Cursor } from "./cursor";
 import FunnelEditor from "./funnel-editor";
 import FunnelEditorSidebar from "./funnel-editor-sidebar";
 import { FunnelEditorNavigation } from "./funnel-editor-navigation";
@@ -24,29 +23,29 @@ export const Canvas = ({
   funnelId,
   funnelPageId,
 }: CanvasProps) => {
-  // const [{ cursor }, updateMyPresence] = useMyPresence();
-  // const others = useOthers();
+  const [{ cursor }, updateMyPresence] = useMyPresence();
+  const others = useOthers();
 
   return (
     <main
       className="fixed top-0 bottom-0 left-0 right-0 z-[20] bg-background overflow-hidden touch-none"
-      // onPointerMove={(event) => {
-      //   // update the cursor position on every pointer move
-      //   updateMyPresence({
-      //     cursor: {
-      //       x: Math.round(event.clientX),
-      //       y: Math.round(event.clientY),
-      //     },
-      //   });
-      // }}
-      // onPointerLeave={() =>
-      //   // When the pointer goes out, set cursor to null
-      //   updateMyPresence({
-      //     cursor: null,
-      //   })
-      // }
+      onPointerMove={(event) => {
+        // update the cursor position on every pointer move
+        updateMyPresence({
+          cursor: {
+            x: Math.round(event.clientX),
+            y: Math.round(event.clientY),
+          },
+        });
+      }}
+      onPointerLeave={() =>
+        // When the pointer goes out, set cursor to null
+        updateMyPresence({
+          cursor: null,
+        })
+      }
     >
-      {/* {others.map(({ connectionId, presence, info }) => {
+      {others.map(({ connectionId, presence, info }) => {
         if (presence.cursor === null) {
           return null;
         }
@@ -65,7 +64,8 @@ export const Canvas = ({
             name={name}
           />
         );
-      })} */}
+      })}
+      {/* {funnelPageDetails && ( */}
       <EditorProvider
         subaccountId={subaccountId}
         funnelId={funnelId}
@@ -85,6 +85,7 @@ export const Canvas = ({
           funnelPageId={funnelPageId}
         />
       </EditorProvider>
+      {/* )} */}
     </main>
   );
 };
