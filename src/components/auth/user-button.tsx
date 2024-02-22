@@ -16,6 +16,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { logout } from "@/actions/logout";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import Link from "next/link";
+import { toast } from "sonner";
 
 export const UserButton = () => {
   const user = useCurrentUser();
@@ -93,7 +94,12 @@ export const UserButton = () => {
         {/* <DropdownMenuSeparator /> */}
 
         {/* <SignOutButton> */}
-        <DropdownMenuItem onClick={() => logout()}>
+        <DropdownMenuItem
+          onClick={() => {
+            toast.loading("Logging out...");
+            logout();
+          }}
+        >
           <div className="flex items-center space-x-2">
             <LogOut className="w-4 h-4" />
             <span>Log out</span>

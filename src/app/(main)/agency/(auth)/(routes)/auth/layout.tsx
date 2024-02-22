@@ -1,6 +1,14 @@
 const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-sky-400 to to-blue-800">
+    <div
+      className="relative flex min-h-screen w-screen items-center justify-start overflow-y-auto rounded-3xl bg-content1 p-2 sm:p-4 lg:p-8 2xl:pl-20"
+      style={{
+        backgroundImage:
+          "url(https://res.cloudinary.com/diikrvcu5/image/upload/v1708639291/deep-dusk-012_ttctef.jpg)",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
       {children}
     </div>
   );

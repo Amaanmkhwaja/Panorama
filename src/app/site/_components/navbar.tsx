@@ -1,12 +1,15 @@
 import Link from "next/link";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { UserButton } from "@/components/auth/user-button";
 
-import { GetStartedButton } from "./get-started-button";
 import { MobileNav } from "./mobile-nav";
+import { ArrowRight } from "lucide-react";
+import { currentUser } from "@/lib/auth";
+import { LoginButton } from "@/components/auth/login-button";
 
 export const Navbar = async () => {
+  const user = await currentUser();
   return (
     <div className="sticky inset-x-0 top-0 z-30 w-full border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all">
       <div className="mx-auto w-full max-w-screen-xl px-2.5 md:px-20">
@@ -19,26 +22,45 @@ export const Navbar = async () => {
           </Link>
           <div className="items-center space-x-4 flex relative">
             <Link href="#features" className="hidden md:block">
-              <Button className="rounded-full" variant="ghost">
+              <Button className="rounded-full" variant="ghost" size="sm">
                 Features
               </Button>
             </Link>
             <Link href="#pricing" className="hidden md:block">
-              <Button className="rounded-full" variant="ghost">
+              <Button className="rounded-full" variant="ghost" size="sm">
                 Pricing
               </Button>
             </Link>
             <Link href="#testimonials" className="hidden md:block">
-              <Button className="rounded-full" variant="ghost">
+              <Button className="rounded-full" variant="ghost" size="sm">
                 Testimonials
               </Button>
             </Link>
-            <Link href="#faq" className="hidden md:block">
-              <Button className="rounded-full" variant="ghost">
-                FAQ
-              </Button>
-            </Link>
-            <GetStartedButton />
+            {!user && (
+              <>
+                {/* <Link href="/agency/auth/login" className="hidden md:block">
+                  <Button className="rounded-full" variant="ghost" size="sm">
+                    Login
+                  </Button>
+                </Link> */}
+                <LoginButton mode="modal">
+                  <span
+                    className={buttonVariants({
+                      variant: "ghost",
+                      size: "sm",
+                    })}
+                  >
+                    Login
+                  </span>
+                </LoginButton>
+                <Link href="/agency/auth/register">
+                  <Button className="rounded-full">
+                    Get Started <ArrowRight className="ml-2 w-4 h-4 inline" />
+                  </Button>
+                </Link>
+              </>
+            )}
+            {/* <GetStartedButton /> */}
             <UserButton />
             <MobileNav />
           </div>
