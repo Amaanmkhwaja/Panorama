@@ -20,6 +20,7 @@ import {
 import { getFunnels } from "@/data/funnel";
 
 import Stripe from "stripe";
+import { EditorElement } from "@/providers/editor/editor-provider";
 
 export type NotificationWithUser =
   | ({

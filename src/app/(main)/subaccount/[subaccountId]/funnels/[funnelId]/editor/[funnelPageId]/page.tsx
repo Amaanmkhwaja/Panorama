@@ -1,10 +1,12 @@
-import { redirect } from "next/navigation";
+"use client";
 
 import { Loader } from "lucide-react";
-import { db } from "@/lib/db";
 
 import { Room } from "@/components/global/room";
 import { Canvas } from "./_components/canvas";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 
 interface EditorFunnelPageProps {
   params: {
@@ -14,17 +16,10 @@ interface EditorFunnelPageProps {
   };
 }
 
-const EditorFunnelPage = async ({ params }: EditorFunnelPageProps) => {
-  const funnelPageDetails = await db.funnelPage.findFirst({
-    where: {
-      id: params.funnelPageId,
-    },
+const EditorFunnelPage = ({ params }: EditorFunnelPageProps) => {
+  const funnelPageDetails = useQuery(api.funnelPage.getFunnelPageById, {
+    id: params.funnelPageId as Id<"funnelPage">,
   });
-  if (!funnelPageDetails) {
-    return redirect(
-      `/subaccount/${params.subaccountId}/funnels/${params.funnelId}`
-    );
-  }
 
   return (
     <Room
@@ -36,12 +31,14 @@ const EditorFunnelPage = async ({ params }: EditorFunnelPageProps) => {
         </div>
       }
     >
-      <Canvas
-        funnelPageDetails={funnelPageDetails}
-        subaccountId={params.subaccountId}
-        funnelId={params.funnelId}
-        funnelPageId={params.funnelPageId}
-      />
+      {funnelPageDetails && (
+        <Canvas
+          funnelPageDetails={funnelPageDetails}
+          subaccountId={params.subaccountId}
+          funnelId={params.funnelId}
+          funnelPageId={params.funnelPageId as Id<"funnelPage">}
+        />
+      )}
     </Room>
   );
 };

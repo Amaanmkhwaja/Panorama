@@ -1,18 +1,25 @@
 "use client";
 
 import clsx from "clsx";
+import { toast } from "sonner";
 import { Trash } from "lucide-react";
 
 import { EditorBtns } from "@/lib/constants";
 import { EditorElement, useEditor } from "@/providers/editor/editor-provider";
 
 import { Badge } from "@/components/ui/badge";
+import { deleteElementAndSaveToDB } from "@/lib/elements";
+import { Id } from "@/convex/_generated/dataModel";
 
 interface VideoComponentProps {
   element: EditorElement;
+  funnelPageId: Id<"funnelPage">;
 }
 
-export const VideoComponent = ({ element }: VideoComponentProps) => {
+export const VideoComponent = ({
+  element,
+  funnelPageId,
+}: VideoComponentProps) => {
   const { dispatch, state } = useEditor();
   const styles = element.styles;
 
@@ -31,11 +38,15 @@ export const VideoComponent = ({ element }: VideoComponentProps) => {
     });
   };
 
-  const handleDeleteElement = () => {
-    dispatch({
-      type: "DELETE_ELEMENT",
-      payload: { elementDetails: element },
-    });
+  const handleDeleteElement = async () => {
+    const response = await deleteElementAndSaveToDB(
+      funnelPageId,
+      state.editor.elements,
+      element
+    );
+    if (response.error) {
+      toast.error(response.error);
+    }
   };
 
   return (

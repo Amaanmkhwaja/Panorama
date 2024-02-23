@@ -2,7 +2,6 @@
 
 import { FocusEventHandler, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 import {
   ArrowLeftCircle,
@@ -16,10 +15,7 @@ import {
 import clsx from "clsx";
 import { toast } from "sonner";
 
-import { FunnelPage } from "@prisma/client";
-import { upsertFunnelPage } from "@/actions/funnel";
 import { saveActivityLogsNotification } from "@/actions/notification";
-import { useHistory, useCanUndo, useCanRedo } from "@/liveblocks.config";
 import { DeviceTypes, useEditor } from "@/providers/editor/editor-provider";
 
 import {
@@ -34,10 +30,13 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { Participants } from "./participants";
+import { Doc } from "@/convex/_generated/dataModel";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 interface FunnelEditorNavigationProps {
   funnelId: string;
-  funnelPageDetails: FunnelPage;
+  funnelPageDetails: Doc<"funnelPage">;
   subaccountId: string;
 }
 
@@ -46,16 +45,16 @@ export const FunnelEditorNavigation = ({
   funnelPageDetails,
   subaccountId,
 }: FunnelEditorNavigationProps) => {
-  const router = useRouter();
   const { state, dispatch } = useEditor();
-  const history = useHistory();
-  const canUndo = useCanUndo();
-  const canRedo = useCanRedo();
+  const saveFunnelPageContent = useMutation(
+    api.funnelPage.updateFunnelPageContent
+  );
+  const saveFunnelPageName = useMutation(api.funnelPage.updateFunnelPageName);
 
   useEffect(() => {
     dispatch({
       type: "SET_FUNNELPAGE_ID",
-      payload: { funnelPageId: funnelPageDetails.id },
+      payload: { funnelPageId: funnelPageDetails._id },
     });
   }, [funnelPageDetails]);
 
@@ -64,20 +63,22 @@ export const FunnelEditorNavigation = ({
   ) => {
     if (event.target.value === funnelPageDetails.name) return;
     if (event.target.value) {
-      await upsertFunnelPage(
-        subaccountId,
-        {
-          id: funnelPageDetails.id,
-          name: event.target.value,
-          order: funnelPageDetails.order,
-        },
-        funnelId
-      );
-
-      toast.success("Success", {
-        description: "Saved Funnel Page title",
+      const promise = saveFunnelPageName({
+        id: funnelPageDetails._id,
+        name: event.target.value,
+      }).then(async () => {
+        await saveActivityLogsNotification({
+          agencyId: undefined,
+          description: `Updated a funnel page | ${funnelPageDetails.name}`,
+          subaccountId: subaccountId,
+        });
       });
-      router.refresh();
+
+      toast.promise(promise, {
+        loading: "Saving...",
+        success: "Saved changes!",
+        error: "Could not save changes!",
+      });
     } else {
       toast.error("Error!", {
         description: "You need to have a title!",
@@ -101,28 +102,22 @@ export const FunnelEditorNavigation = ({
 
   const handleOnSave = async () => {
     const content = JSON.stringify(state.editor.elements);
-    try {
-      const response = await upsertFunnelPage(
-        subaccountId,
-        {
-          ...funnelPageDetails,
-          content,
-        },
-        funnelId
-      );
+    const promise = saveFunnelPageContent({
+      id: funnelPageDetails._id,
+      content,
+    }).then(async () => {
       await saveActivityLogsNotification({
         agencyId: undefined,
-        description: `Updated a funnel page | ${response?.name}`,
+        description: `Updated a funnel page | ${funnelPageDetails.name}`,
         subaccountId: subaccountId,
       });
-      toast.success("Success", {
-        description: "Saved Editor",
-      });
-    } catch (error) {
-      toast.error("Error!", {
-        description: "Could not save editor",
-      });
-    }
+    });
+
+    toast.promise(promise, {
+      loading: "Saving...",
+      success: "Saved changes!",
+      error: "Could not save changes!",
+    });
   };
 
   return (
@@ -214,10 +209,8 @@ export const FunnelEditorNavigation = ({
             <EyeIcon />
           </Button>
           <Button
-            // disabled={!(state.history.currentIndex > 0)}
-            disabled={!canUndo}
-            onClick={history.undo}
-            // onClick={handleUndo}
+            disabled={!(state.history.currentIndex > 0)}
+            onClick={handleUndo}
             variant={"ghost"}
             size={"icon"}
             className="hover:bg-slate-800"
@@ -225,12 +218,10 @@ export const FunnelEditorNavigation = ({
             <Undo2 />
           </Button>
           <Button
-            // disabled={
-            //   !(state.history.currentIndex < state.history.history.length - 1)
-            // }
-            disabled={!canRedo}
-            onClick={history.redo}
-            // onClick={handleRedo}
+            disabled={
+              !(state.history.currentIndex < state.history.history.length - 1)
+            }
+            onClick={handleRedo}
             variant={"ghost"}
             size={"icon"}
             className="hover:bg-slate-800 mr-4"
@@ -248,7 +239,7 @@ export const FunnelEditorNavigation = ({
               Last updated {funnelPageDetails.updatedAt.toLocaleDateString()}
             </span>
           </div> */}
-          <Button onClick={handleOnSave}>Save</Button>
+          {/* <Button onClick={handleOnSave}>Save</Button> */}
         </aside>
       </nav>
     </TooltipProvider>

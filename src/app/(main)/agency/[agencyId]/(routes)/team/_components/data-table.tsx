@@ -79,7 +79,7 @@ export default function DataTable<TData, TValue>({
         </Button>
       </div>
       <div className="border bg-background rounded-lg">
-        <table>
+        <table className="w-full">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>

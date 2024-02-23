@@ -1,3 +1,4 @@
+import { Id } from "@/convex/_generated/dataModel";
 import { DeviceTypes, EditorElement } from "./editor-provider";
 
 // anytime we need to change the state, we need to dispatch one of these actions

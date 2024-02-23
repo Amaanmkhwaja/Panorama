@@ -6,6 +6,7 @@ import { FunnelPage } from "@prisma/client";
 import { EditorBtns } from "@/lib/constants";
 
 import { EditorAction } from "./editor-actions";
+import { Doc } from "@/convex/_generated/dataModel";
 
 export type DeviceTypes = "Desktop" | "Tablet" | "Mobile";
 
@@ -71,7 +72,7 @@ const initialState: EditorState = {
   history: initialHistoryState,
 };
 
-const addAnElement = (
+export const addAnElement = (
   editorArray: EditorElement[],
   action: EditorAction
 ): EditorElement[] => {
@@ -95,7 +96,7 @@ const addAnElement = (
   });
 };
 
-const updateAnElement = (
+export const updateAnElement = (
   editorArray: EditorElement[],
   action: EditorAction
 ): EditorElement[] => {
@@ -115,7 +116,7 @@ const updateAnElement = (
   });
 };
 
-const deleteAnElement = (
+export const deleteAnElement = (
   editorArray: EditorElement[],
   action: EditorAction
 ): EditorElement[] => {
@@ -166,7 +167,9 @@ const editorReducer = (
 
     case "UPDATE_ELEMENT":
       // Perform your logic to update the element in the state
+      console.log({ payload: action.payload });
       const updatedElements = updateAnElement(state.editor.elements, action);
+      console.log({ updatedElements });
 
       const UpdatedElementIsSelected =
         state.editor.selectedElement.id === action.payload.elementDetails.id;
@@ -368,7 +371,7 @@ export const EditorContext = createContext<{
   dispatch: Dispatch<EditorAction>;
   subaccountId: string;
   funnelId: string;
-  pageDetails: FunnelPage | null;
+  pageDetails: Doc<"funnelPage"> | null;
 }>({
   state: initialState,
   dispatch: () => undefined,
@@ -381,7 +384,7 @@ type EditorProps = {
   children: React.ReactNode;
   subaccountId: string;
   funnelId: string;
-  pageDetails: FunnelPage;
+  pageDetails: Doc<"funnelPage">;
 };
 
 const EditorProvider = (props: EditorProps) => {

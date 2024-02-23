@@ -15,7 +15,11 @@ import {
   ChevronsLeftRightIcon,
   LucideImageDown,
 } from "lucide-react";
-import { useEditor } from "@/providers/editor/editor-provider";
+import { toast } from "sonner";
+
+import { Id } from "@/convex/_generated/dataModel";
+import { updateFunnelPageContentInDB } from "@/actions/funnel";
+import { updateAnElement, useEditor } from "@/providers/editor/editor-provider";
 
 import {
   Accordion,
@@ -36,8 +40,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsTrigger, TabsList } from "@/components/ui/tabs";
+import { EditorAction } from "@/providers/editor/editor-actions";
 
-export const SettingsTab = () => {
+export const SettingsTab = ({
+  funnelPageId,
+}: {
+  funnelPageId: Id<"funnelPage">;
+}) => {
   const { state, dispatch } = useEditor();
 
   const handleOnChanges = (e: any) => {
@@ -82,6 +91,85 @@ export const SettingsTab = () => {
     });
   };
 
+  const handleOnBlurStyleChanges = async (e: any) => {
+    if (
+      !state.editor.selectedElement.type === null ||
+      state.editor.selectedElement.id === ""
+    ) {
+      console.log("no selected item");
+      return;
+    }
+
+    const styleSettings = e.target.id;
+    let value = e.target.value;
+    const styleObject = {
+      [styleSettings]: value,
+    };
+
+    const action: EditorAction = {
+      type: "UPDATE_ELEMENT",
+      payload: {
+        elementDetails: {
+          ...state.editor.selectedElement,
+          styles: {
+            ...state.editor.selectedElement.styles,
+            ...styleObject,
+          },
+        },
+      },
+    };
+
+    const updatedElementsArray = updateAnElement(state.editor.elements, action);
+
+    const elementsToString = JSON.stringify(updatedElementsArray);
+    const response = await updateFunnelPageContentInDB(
+      funnelPageId,
+      elementsToString
+    );
+    if (response.error) {
+      toast.error(response.error);
+    }
+    // if (response.success) {
+    //   toast.success("saved style change in db");
+    // }
+  };
+
+  const handleOnBlurPropChanges = async (e: any) => {
+    const settingProperty = e.target.id;
+    let value = e.target.value;
+    const styleObject = {
+      [settingProperty]: value,
+    };
+
+    const action: EditorAction = {
+      type: "UPDATE_ELEMENT",
+      payload: {
+        elementDetails: {
+          ...state.editor.selectedElement,
+          content: {
+            ...state.editor.selectedElement.content,
+            ...styleObject,
+          },
+        },
+      },
+    };
+
+    const updatedElementsArray = updateAnElement(state.editor.elements, action);
+
+    const elementsToString = JSON.stringify(updatedElementsArray);
+    const response = await updateFunnelPageContentInDB(
+      funnelPageId,
+      elementsToString
+    );
+    if (response.error) {
+      toast.error(response.error);
+    }
+  };
+
+  const notSelectedElement =
+    !state.editor.selectedElement.type ||
+    state.editor.selectedElement.id === "";
+
   return (
     <Accordion
       type="multiple"
@@ -99,7 +187,9 @@ export const SettingsTab = () => {
                   id="href"
                   placeholder="https:domain.example.com/pathname"
                   onChange={handleChangeCustomValues}
+                  onBlur={handleOnBlurPropChanges}
                   value={state.editor.selectedElement.content.href}
+                  disabled={notSelectedElement}
                 />
               </div>
             )}
@@ -114,7 +204,7 @@ export const SettingsTab = () => {
             <p className="text-muted-foreground">Text Align</p>
             <Tabs
               onValueChange={(e) =>
-                handleOnChanges({
+                handleOnBlurStyleChanges({
                   target: {
                     id: "textAlign",
                     value: e,
@@ -125,24 +215,28 @@ export const SettingsTab = () => {
             >
               <TabsList className="flex items-center flex-row justify-between border-[1px] rounded-md bg-transparent h-fit gap-4">
                 <TabsTrigger
+                  disabled={notSelectedElement}
                   value="left"
                   className="w-10 h-10 p-0 data-[state=active]:bg-muted"
                 >
                   <AlignLeft size={18} />
                 </TabsTrigger>
                 <TabsTrigger
+                  disabled={notSelectedElement}
                   value="right"
                   className="w-10 h-10 p-0 data-[state=active]:bg-muted"
                 >
                   <AlignRight size={18} />
                 </TabsTrigger>
                 <TabsTrigger
+                  disabled={notSelectedElement}
                   value="center"
                   className="w-10 h-10 p-0 data-[state=active]:bg-muted"
                 >
                   <AlignCenter size={18} />
                 </TabsTrigger>
                 <TabsTrigger
+                  disabled={notSelectedElement}
                   value="justify"
                   className="w-10 h-10 p-0 data-[state=active]:bg-muted "
                 >
@@ -155,7 +249,9 @@ export const SettingsTab = () => {
             <p className="text-muted-foreground">Font Family</p>
             <Input
               id="DM Sans"
+              disabled={notSelectedElement}
               onChange={handleOnChanges}
+              onBlur={handleOnBlurStyleChanges}
               value={state.editor.selectedElement.styles.fontFamily}
             />
           </div>
@@ -163,7 +259,9 @@ export const SettingsTab = () => {
             <p className="text-muted-foreground">Color</p>
             <Input
               id="color"
+              disabled={notSelectedElement}
               onChange={handleOnChanges}
+              onBlur={handleOnBlurStyleChanges}
               value={state.editor.selectedElement.styles.color}
             />
           </div>
@@ -171,8 +269,9 @@ export const SettingsTab = () => {
             <div>
               <Label className="text-muted-foreground">Weight</Label>
               <Select
+                disabled={notSelectedElement}
                 onValueChange={(e) =>
-                  handleOnChanges({
+                  handleOnBlurStyleChanges({
                     target: {
                       id: "font-weight",
                       value: e,
@@ -198,7 +297,9 @@ export const SettingsTab = () => {
               <Input
                 placeholder="px"
                 id="fontSize"
+                disabled={notSelectedElement}
                 onChange={handleOnChanges}
+                onBlur={handleOnBlurStyleChanges}
                 value={state.editor.selectedElement.styles.fontSize}
               />
             </div>
@@ -219,7 +320,9 @@ export const SettingsTab = () => {
                     <Input
                       id="height"
                       placeholder="px"
+                      disabled={notSelectedElement}
                       onChange={handleOnChanges}
+                      onBlur={handleOnBlurStyleChanges}
                       value={state.editor.selectedElement.styles.height}
                     />
                   </div>
@@ -228,7 +331,9 @@ export const SettingsTab = () => {
                     <Input
                       placeholder="px"
                       id="width"
+                      disabled={notSelectedElement}
                       onChange={handleOnChanges}
+                      onBlur={handleOnBlurStyleChanges}
                       value={state.editor.selectedElement.styles.width}
                     />
                   </div>
@@ -242,7 +347,9 @@ export const SettingsTab = () => {
                     <Input
                       id="marginTop"
                       placeholder="px"
+                      disabled={notSelectedElement}
                       onChange={handleOnChanges}
+                      onBlur={handleOnBlurStyleChanges}
                       value={state.editor.selectedElement.styles.marginTop}
                     />
                   </div>
@@ -251,7 +358,9 @@ export const SettingsTab = () => {
                     <Input
                       placeholder="px"
                       id="marginBottom"
+                      disabled={notSelectedElement}
                       onChange={handleOnChanges}
+                      onBlur={handleOnBlurStyleChanges}
                       value={state.editor.selectedElement.styles.marginBottom}
                     />
                   </div>
@@ -262,7 +371,9 @@ export const SettingsTab = () => {
                     <Input
                       placeholder="px"
                       id="marginLeft"
+                      disabled={notSelectedElement}
                       onChange={handleOnChanges}
+                      onBlur={handleOnBlurStyleChanges}
                       value={state.editor.selectedElement.styles.marginLeft}
                     />
                   </div>
@@ -271,7 +382,9 @@ export const SettingsTab = () => {
                     <Input
                       placeholder="px"
                       id="marginRight"
+                      disabled={notSelectedElement}
                       onChange={handleOnChanges}
+                      onBlur={handleOnBlurStyleChanges}
                       value={state.editor.selectedElement.styles.marginRight}
                     />
                   </div>
@@ -287,7 +400,9 @@ export const SettingsTab = () => {
                     <Input
                       placeholder="px"
                       id="paddingTop"
+                      disabled={notSelectedElement}
                       onChange={handleOnChanges}
+                      onBlur={handleOnBlurStyleChanges}
                       value={state.editor.selectedElement.styles.paddingTop}
                     />
                   </div>
@@ -296,7 +411,9 @@ export const SettingsTab = () => {
                     <Input
                       placeholder="px"
                       id="paddingBottom"
+                      disabled={notSelectedElement}
                       onChange={handleOnChanges}
+                      onBlur={handleOnBlurStyleChanges}
                       value={state.editor.selectedElement.styles.paddingBottom}
                     />
                   </div>
@@ -307,7 +424,9 @@ export const SettingsTab = () => {
                     <Input
                       placeholder="px"
                       id="paddingLeft"
+                      disabled={notSelectedElement}
                       onChange={handleOnChanges}
+                      onBlur={handleOnBlurStyleChanges}
                       value={state.editor.selectedElement.styles.paddingLeft}
                     />
                   </div>
@@ -316,7 +435,9 @@ export const SettingsTab = () => {
                     <Input
                       placeholder="px"
                       id="paddingRight"
+                      disabled={notSelectedElement}
                       onChange={handleOnChanges}
+                      onBlur={handleOnBlurStyleChanges}
                       value={state.editor.selectedElement.styles.paddingRight}
                     />
                   </div>
@@ -347,6 +468,7 @@ export const SettingsTab = () => {
               </small>
             </div>
             <Slider
+              disabled={notSelectedElement}
               onValueChange={(e) => {
                 handleOnChanges({
                   target: {
@@ -384,6 +506,7 @@ export const SettingsTab = () => {
               </small>
             </div>
             <Slider
+              disabled={notSelectedElement}
               onValueChange={(e) => {
                 handleOnChanges({
                   target: {
@@ -421,6 +544,8 @@ export const SettingsTab = () => {
                 className="!border-y-0 rounded-none !border-r-0 mr-2"
                 id="backgroundColor"
                 onChange={handleOnChanges}
+                onBlur={handleOnBlurStyleChanges}
+                disabled={notSelectedElement}
                 value={state.editor.selectedElement.styles.backgroundColor}
               />
             </div>
@@ -440,6 +565,8 @@ export const SettingsTab = () => {
                 className="!border-y-0 rounded-none !border-r-0 mr-2"
                 id="backgroundImage"
                 onChange={handleOnChanges}
+                onBlur={handleOnBlurStyleChanges}
+                disabled={notSelectedElement}
                 value={state.editor.selectedElement.styles.backgroundImage}
               />
             </div>
@@ -448,7 +575,7 @@ export const SettingsTab = () => {
             <Label className="text-muted-foreground">Image Position</Label>
             <Tabs
               onValueChange={(e) =>
-                handleOnChanges({
+                handleOnBlurStyleChanges({
                   target: {
                     id: "backgroundSize",
                     value: e,
@@ -459,18 +586,21 @@ export const SettingsTab = () => {
             >
               <TabsList className="flex items-center flex-row justify-between border-[1px] rounded-md bg-transparent h-fit gap-4">
                 <TabsTrigger
+                  disabled={notSelectedElement}
                   value="cover"
                   className="w-10 h-10 p-0 data-[state=active]:bg-muted"
                 >
                   <ChevronsLeftRightIcon size={18} />
                 </TabsTrigger>
                 <TabsTrigger
+                  disabled={notSelectedElement}
                   value="contain"
                   className="w-10 h-10 p-0 data-[state=active]:bg-muted"
                 >
                   <AlignVerticalJustifyCenter size={22} />
                 </TabsTrigger>
                 <TabsTrigger
+                  disabled={notSelectedElement}
                   value="auto"
                   className="w-10 h-10 p-0 data-[state=active]:bg-muted"
                 >
@@ -487,7 +617,7 @@ export const SettingsTab = () => {
           <Label className="text-muted-foreground">Justify Content</Label>
           <Tabs
             onValueChange={(e) =>
-              handleOnChanges({
+              handleOnBlurStyleChanges({
                 target: {
                   id: "justifyContent",
                   value: e,
@@ -498,30 +628,35 @@ export const SettingsTab = () => {
           >
             <TabsList className="flex items-center flex-row justify-between border-[1px] rounded-md bg-transparent h-fit gap-4">
               <TabsTrigger
+                disabled={notSelectedElement}
                 value="space-between"
                 className="w-10 h-10 p-0 data-[state=active]:bg-muted"
               >
                 <AlignHorizontalSpaceBetween size={18} />
               </TabsTrigger>
               <TabsTrigger
+                disabled={notSelectedElement}
                 value="space-evenly"
                 className="w-10 h-10 p-0 data-[state=active]:bg-muted"
               >
                 <AlignHorizontalSpaceAround size={18} />
               </TabsTrigger>
               <TabsTrigger
+                disabled={notSelectedElement}
                 value="center"
                 className="w-10 h-10 p-0 data-[state=active]:bg-muted"
               >
                 <AlignHorizontalJustifyCenterIcon size={18} />
               </TabsTrigger>
               <TabsTrigger
+                disabled={notSelectedElement}
                 value="start"
                 className="w-10 h-10 p-0 data-[state=active]:bg-muted "
               >
                 <AlignHorizontalJustifyStart size={18} />
               </TabsTrigger>
               <TabsTrigger
+                disabled={notSelectedElement}
                 value="end"
                 className="w-10 h-10 p-0 data-[state=active]:bg-muted "
               >
@@ -532,7 +667,7 @@ export const SettingsTab = () => {
           <Label className="text-muted-foreground">Align Items</Label>
           <Tabs
             onValueChange={(e) =>
-              handleOnChanges({
+              handleOnBlurStyleChanges({
                 target: {
                   id: "alignItems",
                   value: e,
@@ -543,12 +678,14 @@ export const SettingsTab = () => {
           >
             <TabsList className="flex items-center flex-row justify-between border-[1px] rounded-md bg-transparent h-fit gap-4">
               <TabsTrigger
+                disabled={notSelectedElement}
                 value="center"
                 className="w-10 h-10 p-0 data-[state=active]:bg-muted"
               >
                 <AlignVerticalJustifyCenter size={18} />
               </TabsTrigger>
               <TabsTrigger
+                disabled={notSelectedElement}
                 value="normal"
                 className="w-10 h-10 p-0 data-[state=active]:bg-muted "
               >
@@ -562,8 +699,9 @@ export const SettingsTab = () => {
               placeholder="px"
               type="checkbox"
               id="display"
+              disabled={notSelectedElement}
               onChange={(va) => {
-                handleOnChanges({
+                handleOnBlurStyleChanges({
                   target: {
                     id: "display",
                     value: va.target.checked ? "flex" : "block",
@@ -578,7 +716,9 @@ export const SettingsTab = () => {
             <Input
               placeholder="px"
               id="flexDirection"
+              disabled={notSelectedElement}
               onChange={handleOnChanges}
+              onBlur={handleOnBlurStyleChanges}
               value={state.editor.selectedElement.styles.flexDirection}
             />
           </div>

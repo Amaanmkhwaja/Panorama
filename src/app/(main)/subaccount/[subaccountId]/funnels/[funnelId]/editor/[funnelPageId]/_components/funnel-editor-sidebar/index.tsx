@@ -17,12 +17,17 @@ import { SettingsTab } from "./tabs/settings-tab";
 import ComponentsTab from "./tabs/components-tab";
 import { MediaBucketTab } from "./tabs/media-bucket-tab";
 import { LayersTab } from "./tabs/layers-tab";
+import { Id } from "@/convex/_generated/dataModel";
 
 interface FunnelEditorSidebarProps {
   subaccountId: string;
+  funnelPageId: Id<"funnelPage">;
 }
 
-const FunnelEditorSidebar = ({ subaccountId }: FunnelEditorSidebarProps) => {
+const FunnelEditorSidebar = ({
+  subaccountId,
+  funnelPageId,
+}: FunnelEditorSidebarProps) => {
   const { state } = useEditor();
   return (
     <Sheet open={true} modal={false}>
@@ -54,7 +59,7 @@ const FunnelEditorSidebar = ({ subaccountId }: FunnelEditorSidebarProps) => {
                   like.
                 </SheetDescription>
               </SheetHeader>
-              <SettingsTab />
+              <SettingsTab funnelPageId={funnelPageId} />
             </TabsContent>
             <TabsContent value="Media">
               <MediaBucketTab subaccountId={subaccountId} />

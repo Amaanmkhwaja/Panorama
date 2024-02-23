@@ -1,160 +1,117 @@
 "use client";
 
 import clsx from "clsx";
-import { v4 as uuid } from "uuid";
+import { toast } from "sonner";
 import { Trash } from "lucide-react";
 
-import { EditorBtns, defaultStyles } from "@/lib/constants";
-import { EditorElement, useEditor } from "@/providers/editor/editor-provider";
+import { EditorBtns } from "@/lib/constants";
+import {
+  EditorElement,
+  addAnElement,
+  useEditor,
+} from "@/providers/editor/editor-provider";
 
 import { Badge } from "@/components/ui/badge";
 
 import { Recursive } from "./recursive";
+import { EditorAction } from "@/providers/editor/editor-actions";
+import { updateFunnelPageContentInDB } from "@/actions/funnel";
+import { Id } from "@/convex/_generated/dataModel";
+import { deleteElementAndSaveToDB, elementDetails } from "@/lib/elements";
 
 interface ContainerProps {
   element: EditorElement;
+  funnelPageId: Id<"funnelPage">;
 }
 
-export const Container = ({ element }: ContainerProps) => {
+export const Container = ({ element, funnelPageId }: ContainerProps) => {
   const { id, content, name, styles, type } = element;
   const { dispatch, state } = useEditor();
 
-  const handleOnDrop = (e: React.DragEvent, type: string) => {
+  const handleOnDrop = async (e: React.DragEvent, type: string) => {
     e.stopPropagation();
     const componentType = e.dataTransfer.getData("componentType") as EditorBtns;
+    let action: EditorAction | null = null;
 
     switch (componentType) {
       case "text":
-        dispatch({
+        action = {
           type: "ADD_ELEMENT",
           payload: {
             containerId: id,
-            elementDetails: {
-              content: { innerText: "Text Element" },
-              id: uuid(),
-              name: "Text",
-              styles: {
-                color: "black",
-                ...defaultStyles,
-              },
-              type: "text",
-            },
+            elementDetails: elementDetails["text"],
           },
-        });
+        };
         break;
       case "link":
-        dispatch({
+        action = {
           type: "ADD_ELEMENT",
           payload: {
             containerId: id,
-            elementDetails: {
-              content: {
-                innerText: "Link Element",
-                href: "#",
-              },
-              id: uuid(),
-              name: "Link",
-              styles: {
-                color: "black",
-                ...defaultStyles,
-              },
-              type: "link",
-            },
+            elementDetails: elementDetails["link"],
           },
-        });
+        };
         break;
       case "video":
-        dispatch({
+        action = {
           type: "ADD_ELEMENT",
           payload: {
             containerId: id,
-            elementDetails: {
-              content: {
-                src: "https://www.youtube.com/embed/n61ULEU7CO0?si=PuQC-d2ZR0cWlodH",
-              },
-              id: uuid(),
-              name: "Video",
-              styles: {},
-              type: "video",
-            },
+            elementDetails: elementDetails["video"],
           },
-        });
+        };
         break;
       case "container":
-        dispatch({
+        action = {
           type: "ADD_ELEMENT",
           payload: {
             containerId: id,
-            elementDetails: {
-              content: [],
-              id: uuid(),
-              name: "Container",
-              styles: { ...defaultStyles },
-              type: "container",
-            },
+            elementDetails: elementDetails["container"],
           },
-        });
+        };
         break;
       case "contactForm":
-        dispatch({
+        action = {
           type: "ADD_ELEMENT",
           payload: {
             containerId: id,
-            elementDetails: {
-              content: [],
-              id: uuid(),
-              name: "Contact Form",
-              styles: {},
-              type: "contactForm",
-            },
+            elementDetails: elementDetails["contactForm"],
           },
-        });
+        };
         break;
       case "paymentForm":
-        dispatch({
+        action = {
           type: "ADD_ELEMENT",
           payload: {
             containerId: id,
-            elementDetails: {
-              content: [],
-              id: uuid(),
-              name: "Contact Form",
-              styles: {},
-              type: "paymentForm",
-            },
+            elementDetails: elementDetails["paymentForm"],
           },
-        });
+        };
         break;
       case "2Col":
-        dispatch({
+        action = {
           type: "ADD_ELEMENT",
           payload: {
             containerId: id,
-            elementDetails: {
-              content: [
-                {
-                  content: [],
-                  id: uuid(),
-                  name: "Container",
-                  styles: { ...defaultStyles, width: "100%" },
-                  type: "container",
-                },
-                {
-                  content: [],
-                  id: uuid(),
-                  name: "Container",
-                  styles: { ...defaultStyles, width: "100%" },
-                  type: "container",
-                },
-              ],
-              id: uuid(),
-              name: "Two Columns",
-              styles: { ...defaultStyles, display: "flex" },
-              type: "2Col",
-            },
+            elementDetails: elementDetails["2Col"],
           },
-        });
+        };
         break;
+      default:
+        return;
+    }
+
+    const updatedElementsArray = addAnElement(state.editor.elements, action);
+    const elementsToString = JSON.stringify(updatedElementsArray);
+    const res = await updateFunnelPageContentInDB(
+      funnelPageId,
+      elementsToString
+    );
+    if (res.error) {
+      toast.error(res.error);
+    }
+    if (res.success) {
+      toast.success(res.success);
     }
   };
 
@@ -177,13 +134,15 @@ export const Container = ({ element }: ContainerProps) => {
     });
   };
 
-  const handleDeleteElement = () => {
-    dispatch({
-      type: "DELETE_ELEMENT",
-      payload: {
-        elementDetails: element,
-      },
-    });
+  const handleDeleteElement = async () => {
+    const response = await deleteElementAndSaveToDB(
+      funnelPageId,
+      state.editor.elements,
+      element
+    );
+    if (response.error) {
+      toast.error(response.error);
+    }
   };
 
   return (
@@ -231,7 +190,11 @@ export const Container = ({ element }: ContainerProps) => {
 
       {Array.isArray(content) &&
         content.map((childElement) => (
-          <Recursive key={childElement.id} element={childElement} />
+          <Recursive
+            key={childElement.id}
+            element={childElement}
+            funnelPageId={funnelPageId}
+          />
         ))}
 
       {state.editor.selectedElement.id === element.id &&

@@ -28,7 +28,7 @@ export const Social = () => {
 
   return (
     <div className="flex items-center w-full gap-x-2">
-      <Button
+      {/* <Button
         size={"lg"}
         className="w-full"
         variant={"outline"}
@@ -37,7 +37,7 @@ export const Social = () => {
       >
         {loading && <Loader2 className="animate-spin mr-2" />}
         <FcGoogle className="w-5 h-5" />
-      </Button>
+      </Button> */}
       <Button
         size={"lg"}
         className="w-full"

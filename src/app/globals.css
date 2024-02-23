@@ -5,6 +5,7 @@
 html,
 body {
   height: 100vh;
+  scroll-behavior: smooth !important;
 }
 
 *,
@@ -13,81 +14,56 @@ body {
   box-sizing: border-box;
 }
 
-/* 
-R (0)
-G (110)
-B (255 */
-
+/* organge theme */
 @layer base {
   :root {
-    --background: 216 100% 98.04%;
-    --foreground: 213.6 100% 4.9%;
-
-    --primary: 214.12 100% 50%;
+    --background: 23 38% 99%;
+    --foreground: 23 68% 1%;
+    --muted: 23 6% 91%;
+    --muted-foreground: 23 2% 31%;
+    --popover: 23 38% 99%;
+    --popover-foreground: 23 68% 1%;
+    --card: 23 38% 99%;
+    --card-foreground: 23 68% 1%;
+    --border: 23 2% 94%;
+    --input: 23 2% 94%;
+    --primary: 23 97% 46%;
     --primary-foreground: 0 0% 100%;
-
-    --card: 216 100% 98.04%;
-    --card-foreground: 213.6 100% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 213.6 100% 4.9%;
-
-    --secondary: 214.74 100% 92.55%;
-    --secondary-foreground: 216 100% 0.98%;
-
-    --muted: 213.6 100% 95.1%;
-    --muted-foreground: 0 0% 40%;
-
-    --accent: 213.6 100% 95.1%;
-    --accent-foreground: 214.12 100% 50%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 0 0% 90.2%;
-    --input: 0 0% 90.2%;
-    --ring: 214.12 100% 50%;
-
+    --secondary: 23 8% 91%;
+    --secondary-foreground: 23 8% 31%;
+    --accent: 23 17% 86%;
+    --accent-foreground: 23 17% 26%;
+    --destructive: 18 94% 27%;
+    --destructive-foreground: 18 94% 87%;
+    --ring: 23 97% 46%;
     --radius: 0.5rem;
   }
 
   .dark {
-    /* Name: custom color palette
-       Author: Ilias Ism
-       URL: https://gradient.page */
-
-    /* CSS: .bg-gradient { background: var(--gradient) } */
-    --gradient: linear-gradient(to top left, #007adf, #00ecbc);
-
-    --background: 220 65% 3.52%;
-    --foreground: 220 10% 97.2%;
-
-    --muted: 220 50% 13.2%;
-    --muted-foreground: 220 10% 54.4%;
-
-    --popover: 220 45% 5.72%;
-    --popover-foreground: 220 10% 97.2%;
-
-    --card: 220 45% 5.72%;
-    --card-foreground: 220 10% 97.2%;
-
-    --border: 220 50% 13.2%;
-    --input: 220 50% 13.2%;
-
-    --primary: 220 100% 44%;
-    --primary-foreground: 220 10% 97.2%;
-
-    --secondary: 220 50% 13.2%;
-    --secondary-foreground: 220 10% 97.2%;
-
-    --accent: 220 50% 13.2%;
-    --accent-foreground: 220 10% 97.2%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 220 10% 97.2%;
-
-    --ring: 220 100% 44%;
+    --background: 23 34% 1%;
+    --foreground: 23 16% 99%;
+    --muted: 23 6% 9%;
+    --muted-foreground: 23 2% 69%;
+    --popover: 23 34% 1%;
+    --popover-foreground: 23 16% 99%;
+    --card: 23 34% 1%;
+    --card-foreground: 23 16% 99%;
+    --border: 23 2% 13%;
+    --input: 23 2% 13%;
+    --primary: 23 97% 46%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 23 2% 20%;
+    --secondary-foreground: 23 2% 80%;
+    --accent: 23 9% 29%;
+    --accent-foreground: 23 9% 89%;
+    --destructive: 18 94% 57%;
+    --destructive-foreground: 0 0% 0%;
+    --ring: 23 97% 46%;
   }
+}
+
+.grainy {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAElBMVEUAAAD8/vz08vT09vT8+vzs7uxH16TeAAAAAXRSTlMAQObYZgAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAuFJREFUOI0Vk+3NLiEIRG1B8ClAYAsQ2AIEt4D9ePtv5Xp/mZgYJ2fOFJKEfInkVWY2aglmQFkimRTV7MblYyVqD7HXyhKsSuPX12MeDhRHLtGvRG+P+B/S0Vu4OswR9tmvwNPyhdCDbVayJGads/WiUWcjCvCnruTBNHS9gmX2VzVbk7ZvB1gb1hkWFGl+A/n+/FowcO34U/XvKqZ/fHY+6vgRfU92XrOBUbGeeDfQmjWjdrK+frc6FdGReQhfSF5JvR29O2QrfNw1huTwlgsyXLo0u+5So82sgv7tsFZR2nxB6lXiquHrfD8nfYZ9SeT0LiuvSoVrxGY16pCNRZKqvwWsn5OHypPBELzohMCaRaa0ceTHYqe7X/gfJEEtKFbJpWoNqO+aS1cuTykGPpK5Ga48m6L3NefTr013KqYBQu929iP1oQ/7UwSR+i3zqruUmT84qmhzLpxyj7pr9kg7LKvqaXxZmdpn+6o8sHqSqojy02gU3U8q9PnpidiaLks0mbMYz+q2uVXsoBQ8bfURULYxRgZVYCHMv9F4OA7qxT2NPPpvGQ/sTDH2yznKh7E2AcErfcNsaIoN1izzbJiaY63x4QjUFdBSvDCvugPpu5xDny0jzEeuUQbcP1aGT9V90uixngTRLYNEIIZ6yOF1H8tm7rj2JxiefsVy53zGVy3ag5uuPsdufYOzYxLRxngKe7nhx3VAq54pmz/DK9/Q3aDam2Yt3hNXB4HuU87jKNd/CKZn77Qdn5QkXPfqSkhk7hGOXXB+7v09KbBbqdvxGqa0AqfK/atIrL2WXdAgXAJ43Wtwe/aIoacXezeGPMlhDOHDbSfHnaXsL2QzbT82GRwZuezdwcoWzx5pnOnGMUdHuiY7lhdyWzWiHnucLZQxYStMJbtcydHaQ6vtMbe0AcDbxG+QG14AL94xry4297xpy9Cpf1OoxZ740gHDfrK+gtsy0xabwJmfgtCeii79B6aj0SJeLbd7AAAAAElFTkSuQmCC);
 }
 
 @layer base {
@@ -117,5 +93,24 @@ B (255 */
   100% {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+.cta-container {
+  background-image: url("https://img.plasmic.app/img-optimizer/v1/img/5646b8e207ff8474ea3ed9bac8895af3.jpg?w=1920&q=75&f=webp");
+  /* background-position: center; */
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+/* For 2K & 4K resolutions */
+@media screen and (min-width: 2048px) {
+  body {
+    zoom: 1.2;
+  }
+}
+@media screen and (min-width: 3840px) {
+  body {
+    zoom: 2;
   }
 }

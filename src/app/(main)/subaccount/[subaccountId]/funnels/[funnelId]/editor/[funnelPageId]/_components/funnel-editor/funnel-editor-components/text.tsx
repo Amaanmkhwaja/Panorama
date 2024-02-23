@@ -3,22 +3,39 @@
 import clsx from "clsx";
 import { Trash } from "lucide-react";
 
-import { EditorElement, useEditor } from "@/providers/editor/editor-provider";
+import {
+  EditorElement,
+  updateAnElement,
+  useEditor,
+} from "@/providers/editor/editor-provider";
 
 import { Badge } from "@/components/ui/badge";
+import { Id } from "@/convex/_generated/dataModel";
+import { deleteElementAndSaveToDB } from "@/lib/elements";
+import { toast } from "sonner";
+import { EditorAction } from "@/providers/editor/editor-actions";
+import { updateFunnelPageContentInDB } from "@/actions/funnel";
 
 interface TextComponentProps {
   element: EditorElement;
+  funnelPageId: Id<"funnelPage">;
 }
 
-export const TextComponent = ({ element }: TextComponentProps) => {
+export const TextComponent = ({
+  element,
+  funnelPageId,
+}: TextComponentProps) => {
   const { dispatch, state } = useEditor();
 
-  const handleDeleteElement = () => {
-    dispatch({
-      type: "DELETE_ELEMENT",
-      payload: { elementDetails: element },
-    });
+  const handleDeleteElement = async () => {
+    const response = await deleteElementAndSaveToDB(
+      funnelPageId,
+      state.editor.elements,
+      element
+    );
+    if (response.error) {
+      toast.error(response.error);
+    }
   };
   const styles = element.styles;
 
@@ -60,9 +77,9 @@ export const TextComponent = ({ element }: TextComponentProps) => {
         )}
       <span
         contentEditable={!state.editor.liveMode}
-        onBlur={(e) => {
+        onBlur={async (e) => {
           const spanElement = e.target as HTMLSpanElement;
-          dispatch({
+          const action: EditorAction = {
             type: "UPDATE_ELEMENT",
             payload: {
               elementDetails: {
@@ -72,7 +89,20 @@ export const TextComponent = ({ element }: TextComponentProps) => {
                 },
               },
             },
-          });
+          };
+          const updatedElementsArray = updateAnElement(
+            state.editor.elements,
+            action
+          );
+
+          const elementsToString = JSON.stringify(updatedElementsArray);
+          const response = await updateFunnelPageContentInDB(
+            funnelPageId,
+            elementsToString
+          );
+          if (response.error) {
+            toast.error(response.error);
+          }
         }}
       >
         {!Array.isArray(element.content) && element.content.innerText}
