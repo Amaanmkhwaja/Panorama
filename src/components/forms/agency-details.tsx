@@ -52,6 +52,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 interface AgencyDetailsProps {
   data?: Partial<Agency>;
@@ -59,6 +60,7 @@ interface AgencyDetailsProps {
 
 export const AgencyDetails = ({ data }: AgencyDetailsProps) => {
   const router = useRouter();
+  const user = useCurrentUser();
   const [deletingAgency, setDeletingAgency] = useState(false);
 
   const form = useForm<z.infer<typeof AgencyDetailsSchema>>({
@@ -66,7 +68,7 @@ export const AgencyDetails = ({ data }: AgencyDetailsProps) => {
     resolver: zodResolver(AgencyDetailsSchema),
     defaultValues: {
       name: data?.name,
-      companyEmail: data?.companyEmail,
+      companyEmail: data?.companyEmail || user?.email!,
       companyPhone: data?.companyPhone,
       whiteLabel: data?.whiteLabel || false,
       address: data?.address,

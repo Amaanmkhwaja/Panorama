@@ -17,14 +17,11 @@ export const sendPasswordResetEmail = async (email: string, token: string) => {
 };
 
 export const sendVerificationEmail = async (email: string, code: string) => {
-  // const confirmLink = `${domain}/agency/auth/new-verification?token=${token}`;
-
   await resend.emails.send({
     from: "Panorama <no-reply@mannytechlabs.com>",
     to: email,
     reply_to: "manny.sotoruiz@mannytechlabs.com",
-    subject: "Please confirm your email",
+    subject: "Verification Code",
     html: `<p>Use this code to verify your account: ${code}</p>`,
-    // html: `<p>Click <a href="${confirmLink}">here</a> to confirm your email for AO Capital Investments.</p>`,
   });
 };
