@@ -64,7 +64,7 @@ export const Hero = () => {
               <div className="relative">
                 <Image
                   // src="/assets/preview.png"
-                  src="https://utfs.io/f/c7533c04-b0a8-4be1-9b04-8daedd52f957-co4z9n.png"
+                  src="https://res.cloudinary.com/diikrvcu5/image/upload/v1708666219/asd_wavoh4.png"
                   alt="hero image"
                   width={1432}
                   height={1167}
