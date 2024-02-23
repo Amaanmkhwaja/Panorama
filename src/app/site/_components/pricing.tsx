@@ -26,7 +26,7 @@ export const Pricing = () => {
               The ultimate agency kit
             </p>
             <p className="order-first text-5xl font-light tracking-tight text-black">
-              $150
+              $199
               <span className="text-lg font-medium ml-1">/month</span>
             </p>
             <ul
@@ -75,7 +75,7 @@ export const Pricing = () => {
               For serious agency owners
             </p>
             <p className="order-first text-5xl font-light tracking-tight text-white">
-              $50
+              $49
               <span className="text-lg font-medium ml-1">/month</span>
             </p>
             <ul

@@ -8,7 +8,7 @@ export const sendPasswordResetEmail = async (email: string, token: string) => {
   const confirmLink = `${domain}/agency/auth/new-password?token=${token}`;
 
   await resend.emails.send({
-    from: "MannyTech Labs <no-reply@mannytechlabs.com>",
+    from: "Panorama <no-reply@mannytechlabs.com>",
     to: email,
     reply_to: "manny.sotoruiz@mannytechlabs.com",
     subject: "Reset your password",
@@ -16,14 +16,15 @@ export const sendPasswordResetEmail = async (email: string, token: string) => {
   });
 };
 
-export const sendVerificationEmail = async (email: string, token: string) => {
-  const confirmLink = `${domain}/agency/auth/new-verification?token=${token}`;
+export const sendVerificationEmail = async (email: string, code: string) => {
+  // const confirmLink = `${domain}/agency/auth/new-verification?token=${token}`;
 
   await resend.emails.send({
-    from: "MannyTech Labs <no-reply@mannytechlabs.com>",
+    from: "Panorama <no-reply@mannytechlabs.com>",
     to: email,
     reply_to: "manny.sotoruiz@mannytechlabs.com",
     subject: "Please confirm your email",
-    html: `<p>Click <a href="${confirmLink}">here</a> to confirm your email for AO Capital Investments.</p>`,
+    html: `<p>Use this code to verify your account: ${code}</p>`,
+    // html: `<p>Click <a href="${confirmLink}">here</a> to confirm your email for AO Capital Investments.</p>`,
   });
 };

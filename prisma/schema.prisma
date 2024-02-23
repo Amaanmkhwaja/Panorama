@@ -98,6 +98,24 @@ model PasswordResetToken {
   @@unique([email, token])
 }
 
+model TwoFactorToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+// model TwoFactorConfirmation {
+//   id String @id @default(cuid())
+
+//   userId String
+//   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+//   @@unique([userId])
+// }
+
 model Permissions {
   id           String      @id @default(uuid())
   email        String
@@ -389,7 +407,7 @@ model SubAccountSidebarOption {
   updatedAt    DateTime    @updatedAt
   SubAccount   SubAccount? @relation(fields: [subAccountId], references: [id], onDelete: Cascade)
   subAccountId String?
-  order         Int        @default(0)
+  order        Int         @default(0)
 
   @@index([subAccountId])
 }

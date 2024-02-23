@@ -113,6 +113,7 @@ export const AgencyDetails = ({ data }: AgencyDetailsProps) => {
           },
         };
 
+        console.log("making call to api/stripe/create-customer");
         const customerResponse = await fetch("/api/stripe/create-customer", {
           method: "POST",
           headers: {
@@ -122,12 +123,16 @@ export const AgencyDetails = ({ data }: AgencyDetailsProps) => {
         });
         const customerData: { customerId: string } =
           await customerResponse.json();
+        console.log("customerId: ", customerData.customerId);
         custId = customerData.customerId;
       }
 
+      console.log("initUser");
       newUserData = await initUser({ role: "AGENCY_OWNER" });
+      console.log({ newUserData });
       if (!data?.customerId && !custId) return;
 
+      console.log("making upsertAgencyCall");
       const response = await upsertAgency({
         id: data?.id ? data.id : v4(),
         customerId: data?.customerId || custId || "",

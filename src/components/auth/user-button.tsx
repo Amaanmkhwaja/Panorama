@@ -21,7 +21,7 @@ import { toast } from "sonner";
 export const UserButton = () => {
   const user = useCurrentUser();
   if (!user) return null;
-  console.log(user);
+  // console.log(user);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild className="overflow-visible z-[99999]">

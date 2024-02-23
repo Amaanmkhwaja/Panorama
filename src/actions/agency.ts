@@ -66,7 +66,10 @@ export const initUser = async (newUser: Partial<UserDetails>) => {
 };
 
 export const upsertAgency = async (agency: Agency, price?: Plan) => {
+  console.log("upsertAgency got request");
   if (!agency.companyEmail) return { error: "Missing company email!" };
+  console.log("the received agency prop: ");
+  console.log(agency);
 
   try {
     await db.agency.upsert({
@@ -122,8 +125,10 @@ export const upsertAgency = async (agency: Agency, price?: Plan) => {
       },
     });
 
+    console.log("Success! Saved Agency details!");
     return { success: "Agency details saved!" };
   } catch (error) {
+    console.log("upsertAgency GOT ERROR!!!!");
     console.error("upsertAgency server action error: ", error);
     return { error: "Something went wrong." };
   }
