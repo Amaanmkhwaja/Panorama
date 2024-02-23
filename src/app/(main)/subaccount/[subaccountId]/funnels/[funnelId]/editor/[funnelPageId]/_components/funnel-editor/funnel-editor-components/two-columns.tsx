@@ -8,6 +8,7 @@ import { EditorElement, useEditor } from "@/providers/editor/editor-provider";
 
 import { Badge } from "@/components/ui/badge";
 import { Recursive } from "./recursive";
+import { Id } from "@/convex/_generated/dataModel";
 
 interface TwoColumnsProps {
   element: EditorElement;
@@ -120,7 +121,11 @@ export const TwoColumns = ({ element }: TwoColumnsProps) => {
         )}
       {Array.isArray(content) &&
         content.map((childElement) => (
-          <Recursive key={childElement.id} element={childElement} />
+          <Recursive
+            key={childElement.id}
+            element={childElement}
+            funnelPageId={"addad" as Id<"funnelPage">}
+          />
         ))}
     </div>
   );
