@@ -16,28 +16,28 @@ const DomainPage = async ({ params }: DomainPageProps) => {
   const domainData = await getDomainContent(params.domain.slice(0, -1));
   if (!domainData) return notFound();
 
-  const pageData = domainData.FunnelPages.find((page) => !page.pathName);
+  const pageData = domainData.funnelPages.find((page) => !page.pathName);
 
   if (!pageData) return notFound();
 
-  await db.funnelPage.update({
-    where: {
-      id: pageData.id,
-    },
-    data: {
-      visits: {
-        increment: 1,
-      },
-    },
-  });
+  // await db.funnelPage.update({
+  //   where: {
+  //     id: pageData.id,
+  //   },
+  //   data: {
+  //     visits: {
+  //       increment: 1,
+  //     },
+  //   },
+  // });
 
   return (
     <EditorProvider
-      subaccountId={domainData.subAccountId}
+      subaccountId={domainData.funnel.subAccountId}
       pageDetails={pageData}
-      funnelId={domainData.id}
+      funnelId={domainData.funnel.id}
     >
-      <FunnelEditor funnelPageId={pageData.id} liveMode={true} />
+      <FunnelEditor funnelPageDetails={pageData} liveMode={true} />
     </EditorProvider>
   );
 };
