@@ -14,20 +14,19 @@ interface DomainPathPageProps {
 
 const DomainPathPage = async ({ params }: DomainPathPageProps) => {
   const domainData = await getDomainContent(params.domain.slice(0, -1)); // to not get the period ex: "manny."
+  if (!domainData) return notFound();
 
-  const pageData = domainData?.FunnelPages.find(
-    (page) => page.pathName === params.path
-  );
+  const pageData = domainData.funnelPages.find((page) => !page.pathName);
 
-  if (!pageData || !domainData) return notFound();
+  if (!pageData) return notFound();
 
   return (
     <EditorProvider
-      subaccountId={domainData.subAccountId}
+      subaccountId={domainData.funnel.subAccountId}
       pageDetails={pageData}
-      funnelId={domainData.id}
+      funnelId={domainData.funnel.id}
     >
-      <FunnelEditor funnelPageId={pageData.id} liveMode={true} />
+      <FunnelEditor funnelPageDetails={pageData} liveMode={true} />
     </EditorProvider>
   );
 };
