@@ -28,9 +28,8 @@ const features = [
     title: "Advanced CRM Capabilities",
     description:
       "At the heart of GoHighLevel is a robust CRM designed to keep you at the top of your game. Track every interaction, from first click to final sale, and gain deep insights into your customer journey. Customize pipelines, manage contacts, and nurture leads with tools that drive conversions.",
-    type: "video",
-    path: "https://d3m8mk7e1mf7xn.cloudfront.net/app/newsletter.webm",
-    format: "video/webm",
+    type: "image",
+    path: "https://res.cloudinary.com/diikrvcu5/image/upload/v1708666219/asd_wavoh4.png",
     svg: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -52,7 +51,7 @@ const features = [
     description:
       "Create high-converting sales funnels and landing pages in minutes, not hours. Our drag-and-drop builders and library of templates make it easy to design beautiful, effective pages that match your brand. Optimize for conversion with A/B testing and real-time analytics.",
     type: "image",
-    path: "https://images.unsplash.com/photo-1571171637578-41bc2dd41cd2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3540&q=80",
+    path: "https://res.cloudinary.com/diikrvcu5/image/upload/v1708667012/new_l2sexd.png",
     alt: "A computer",
     svg: (
       <svg
@@ -75,6 +74,8 @@ const features = [
     title: "Comprehensive Reporting & Analytics",
     description:
       "Make data-driven decisions with our advanced reporting tools. Monitor your marketing performance, track sales conversions, and understand customer behaviors. Customizable reports and dashboards give you the insights you need to optimize your strategies and grow your business.",
+    type: "image",
+    path: "https://res.cloudinary.com/diikrvcu5/image/upload/v1708667100/analasdaldad_nsim1z.png",
     svg: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
