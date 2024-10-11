@@ -47,7 +47,7 @@ export const CTA = () => {
           <div className="relative mt-16 h-80 lg:mt-8">
             <Image
               className="absolute left-0 top-0 w-[57rem] max-w-none rounded-md bg-white/5 ring-1 ring-white/10"
-              src="https://utfs.io/f/c7533c04-b0a8-4be1-9b04-8daedd52f957-co4z9n.png"
+              src="https://res.cloudinary.com/diikrvcu5/image/upload/v1708666219/asd_wavoh4.png"
               alt="App screenshot"
               width={1824}
               height={1080}

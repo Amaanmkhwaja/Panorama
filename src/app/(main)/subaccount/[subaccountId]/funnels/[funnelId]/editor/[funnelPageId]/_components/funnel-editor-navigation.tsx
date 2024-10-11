@@ -239,7 +239,7 @@ export const FunnelEditorNavigation = ({
               Last updated {funnelPageDetails.updatedAt.toLocaleDateString()}
             </span>
           </div> */}
-          {/* <Button onClick={handleOnSave}>Save</Button> */}
+          <Button onClick={handleOnSave}>Save</Button>
         </aside>
       </nav>
     </TooltipProvider>
